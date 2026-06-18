@@ -1166,7 +1166,7 @@ function sendQuestion(){
   var tools=d.ns?[{type:'web_search_20250305',name:'web_search'}]:[];
   fetch('/api/ask',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSysPrompt(d),tools:tools,messages:CH})
+    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:buildSysPrompt(d),tools:tools,messages:CH})
   }).then(function(r){return r.json();}).then(function(data){
     if(data.error)throw new Error(data.error.message);
     var t2=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
@@ -1190,7 +1190,7 @@ function sendFollowUp(){
   var tools=d.ns?[{type:'web_search_20250305',name:'web_search'}]:[];
   fetch('/api/ask',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSysPrompt(d),tools:tools,messages:CH})
+    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:buildSysPrompt(d),tools:tools,messages:CH})
   }).then(function(r){return r.json();}).then(function(data){
     if(data.error)throw new Error(data.error.message);
     var t2=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
