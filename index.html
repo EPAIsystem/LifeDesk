@@ -1379,21 +1379,29 @@ function runGame(){
   res.classList.add('show');
 }
 
-// STUDY ANCHORS — detect topic lists and make them tappable
+// STUDY ANCHORS - detect topic lists and make them tappable
 var STUDY_PATTERNS = {
-  religion: {
-    label: '📖 Explore this topic',
-    color: 'rel',
-    patterns: [
-      // Numbered lists: "1. The Trinity" or "1) Sabbath"
-      /^\s*\d+[\.\)]\s+(.+?)(?:\s*[-–—].*)?$/gm,
-      // Dashed/bulleted items
-      /^\s*[-•*]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—].*)?$/gm
-    ]
-  },
-  farming: { label: '🌾 Learn about this', color: '', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
-  health: { label: '🩺 Study this topic', color: 'sci', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
-  education: { label: '📚 Study this', color: 'sci', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
-  business: { label: '📈 Explore this', color: '', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
-  finance: { label: '💰 Learn more', color: '', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
-  legal: { label: '⚖️ Study this right', color: 'sci', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(
+  religion: { label: '📖 Explore this topic', color: 'rel' },
+  farming:  { label: '🌾 Learn about this',   color: '' },
+  health:   { label: '🩺 Study this topic',   color: 'sci' },
+  education:{ label: '📚 Study this',         color: 'sci' },
+  business: { label: '📈 Explore this',       color: '' },
+  finance:  { label: '💰 Learn more',         color: '' },
+  legal:    { label: '⚖️ Study this right',     color: 'sci' },
+  tech:     { label: '💻 Learn this topic',   color: 'sci' },
+  youth:    { label: '🎓 Explore this',       color: '' }
+};
+
+function extractTopics(txt) {
+  var topics = [], seen = {};
+  var lines = txt.split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    var s = lines[i].trim();
+    var m = s.match(/^(\d+[.)\]]|[-*])\s+(.+)/);
+    if (!m) continue;
+    var topic = m[2]
+      .replace(/\*\*/g, '').replace(/\*/g, '')
+      .split(' - ')[0].split(' : ')[0].split(': ')[0]
+      .trim();
+    if (topic.length >= 3 && topic.length <= 65 && !/^https?:/.test(topic) && !seen[topic.toLowerCase()]) {
+  
