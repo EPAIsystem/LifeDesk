@@ -314,6 +314,17 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 .ans-body a.bible-link{color:var(--pu);text-decoration:underline;text-decoration-color:rgba(91,33,182,.3);font-weight:600;}
 .ans-body a.bible-link:hover{text-decoration-color:var(--pu);}
 
+/* STUDY ANCHORS - tappable topic chips inside answers */
+.study-anchors{margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);}
+.study-anchors-lbl{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--t3);font-family:"JetBrains Mono",monospace;margin-bottom:8px;}
+.study-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.study-chip{display:inline-flex;align-items:center;gap:5px;background:var(--sf2);border:1.5px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--tx);cursor:pointer;font-family:"Nunito",sans-serif;transition:all .15s;}
+.study-chip:hover{border-color:var(--gn);background:var(--gb);color:var(--gn);}
+.study-chip.rel{border-color:#C4B5FD;background:var(--pub);color:var(--pu);}
+.study-chip.rel:hover{border-color:var(--pu);background:#DDD6FE;}
+.study-chip.sci{border-color:#BAE6FD;background:#E0F2FE;color:var(--sk);}
+.study-chip.sci:hover{border-color:var(--sk);}
+
 /* KIDS GAME BUILDER */
 .game-builder{background:linear-gradient(135deg,#7C3AED,#A855F7);border-radius:18px;padding:18px;color:#fff;margin-bottom:16px;}
 .game-builder-title{font-family:"Playfair Display",serif;font-size:17px;font-weight:800;margin-bottom:4px;}
@@ -1246,8 +1257,9 @@ function sendFollowUp(){
   g('followup-input').value='';
   var d=VD[CV]||VD.farming,body=g('ans-body');
   var qEl=document.createElement('div');qEl.className='qbub';qEl.textContent=txt;body.appendChild(qEl);
+  var fuId='fu-bub-'+Date.now();
   var wrap=document.createElement('div');wrap.className='abub-wrap';
-  wrap.innerHTML='<div class="aav">🌿</div><div class="abub" id="fu-bub"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
+  wrap.innerHTML='<div class="aav">🌿</div><div class="abub" id="'+fuId+'"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
   body.appendChild(wrap);body.scrollTop=body.scrollHeight;
   g('live-txt').textContent='Searching for follow-up...';
   CH.push({role:'user',content:txt});
@@ -1259,10 +1271,19 @@ function sendFollowUp(){
     if(data.error)throw new Error(data.error.message);
     var t2=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
     CH.push({role:'assistant',content:t2});
-    g('fu-bub').innerHTML=fmtAns(t2)+'<div class="tags"><span class="tag tag-g">📍 Follow-up</span></div>';
+    var fuBub=g(fuId);
+    if(fuBub){
+      fuBub.innerHTML=fmtAns(t2)+'<div class="tags"><span class="tag tag-g">📍 Follow-up</span></div>';
+      // Generate study anchors and follow-up suggestions for this bubble too
+      appendStudyAnchors(fuBub, t2, CV);
+      generateFollowUps(txt, t2, CV, fuBub);
+    }
     g('live-txt').textContent='✓ Updated';body.scrollTop=body.scrollHeight;
     saveHistory(txt,t2,CV);
-  }).catch(function(e){g('fu-bub').innerHTML='<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+e.message+'</div></div>';});
+  }).catch(function(e){
+    var fuBub=g(fuId);
+    if(fuBub)fuBub.innerHTML='<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+e.message+'</div></div>';
+  });
 }
 
 // SHOW STEPS
@@ -1291,9 +1312,11 @@ function renderAnswer(txt,d,used){
       '<div class="act-pill">💾 Save</div><div class="act-pill">🔗 Share</div>'+
       '<div class="act-pill">👍 Helpful</div><div class="act-pill">🔄 Follow-up</div>'+
     '</div>';
+  // Study anchors: inject tappable topic chips if answer has a list
+  appendStudyAnchors(g('ans-bubble'), txt, CV);
+  // Follow-up suggestions in background, targeted to this bubble
+  if(LAST_Q) generateFollowUps(LAST_Q, txt, CV, g('ans-bubble'));
   g('ans-body').scrollTop=0;
-  // Generate follow-up suggestions in background
-  if(LAST_Q)generateFollowUps(LAST_Q,txt,CV);
 }
 function renderError(msg){
   g('live-dot').style.animationPlayState='paused';g('live-txt').textContent='⚠ Error';
@@ -1356,40 +1379,21 @@ function runGame(){
   res.classList.add('show');
 }
 
-// GENERATE FOLLOW-UP SUGGESTIONS
-function generateFollowUps(question, answer, vertical){
-  var d=VD[vertical]||VD.farming;
-  var prompt='The user asked: "'+question+'"\n\nThe AI answered: "'+answer.substring(0,600)+'"\n\nGenerate exactly 3 short follow-up questions the user might naturally want to ask next, based on this conversation. Each question should be practical and specific to the vertical: '+d.name+'. Return ONLY a JSON array of 3 strings, no other text. Example: ["Question 1?","Question 2?","Question 3?"]';
-  fetch('/api/ask',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:200,messages:[{role:'user',content:prompt}]})
-  }).then(function(r){return r.json();}).then(function(data){
-    if(data.error)return;
-    var txt=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('').trim();
-    txt=txt.replace(/```json|```/g,'').trim();
-    var qs=JSON.parse(txt);
-    if(!Array.isArray(qs)||!qs.length)return;
-    renderFollowUpSuggestions(qs);
-  }).catch(function(){/* silently fail */});
-}
-function renderFollowUpSuggestions(qs){
-  var bub=g('ans-bubble');
-  if(!bub)return;
-  var existing=bub.querySelector('.fu-sug-wrap');
-  if(existing)existing.remove();
-  var wrap=document.createElement('div');
-  wrap.className='fu-sug-wrap';
-  wrap.innerHTML='<div class="fu-sug-lbl">You might also ask</div>'+
-    '<div class="fu-sug-list">'+qs.map(function(q){
-      return '<button class="fu-sug-btn" onclick="askFollowUpSug(\''+q.replace(/'/g,"\\'")+'\')">'+ q +'</button>';
-    }).join('')+'</div>'+
-    '<div class="fu-sug-divider">— or type your own —</div>';
-  bub.appendChild(wrap);
-}
-function askFollowUpSug(q){
-  g('followup-input').value=q;
-  sendFollowUp();
-}
-</script>
-</body>
-</html>
+// STUDY ANCHORS — detect topic lists and make them tappable
+var STUDY_PATTERNS = {
+  religion: {
+    label: '📖 Explore this topic',
+    color: 'rel',
+    patterns: [
+      // Numbered lists: "1. The Trinity" or "1) Sabbath"
+      /^\s*\d+[\.\)]\s+(.+?)(?:\s*[-–—].*)?$/gm,
+      // Dashed/bulleted items
+      /^\s*[-•*]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—].*)?$/gm
+    ]
+  },
+  farming: { label: '🌾 Learn about this', color: '', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
+  health: { label: '🩺 Study this topic', color: 'sci', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
+  education: { label: '📚 Study this', color: 'sci', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
+  business: { label: '📈 Explore this', color: '', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
+  finance: { label: '💰 Learn more', color: '', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(?:\s*[-–—:].*)?$/gm] },
+  legal: { label: '⚖️ Study this right', color: 'sci', patterns: [/^\s*[-•*\d]+[\.\)]\s+\*?\*?(.+?)\*?\*?(
