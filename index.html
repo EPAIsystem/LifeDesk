@@ -299,6 +299,37 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 .err-title{font-size:13px;font-weight:700;color:var(--rd);margin-bottom:4px;}
 .err-msg{font-size:12px;color:#7F1D1D;line-height:1.5;}
 
+/* FOLLOW-UP SUGGESTIONS */
+.fu-sug-wrap{margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);}
+.fu-sug-lbl{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--t3);font-family:"JetBrains Mono",monospace;margin-bottom:8px;}
+.fu-sug-list{display:flex;flex-direction:column;gap:6px;}
+.fu-sug-btn{background:var(--gb);border:1.5px solid #6EE7B7;border-radius:11px;padding:10px 13px;font-size:12px;font-weight:600;color:var(--gn);cursor:pointer;text-align:left;font-family:"Nunito",sans-serif;transition:all .15s;width:100%;}
+.fu-sug-btn:hover{background:#A7F3D0;border-color:var(--gn);}
+.fu-sug-divider{display:flex;align-items:center;gap:8px;margin:10px 0 8px;color:var(--t3);font-size:11px;font-family:"JetBrains Mono",monospace;}
+.fu-sug-divider::before,.fu-sug-divider::after{content:"";flex:1;height:1px;background:var(--bd);}
+
+/* BIBLE LINKS & URL LINKS */
+.ans-body a.url-link{color:var(--sk);text-decoration:underline;text-decoration-color:rgba(3,105,161,.3);font-weight:600;}
+.ans-body a.url-link:hover{text-decoration-color:var(--sk);}
+.ans-body a.bible-link{color:var(--pu);text-decoration:underline;text-decoration-color:rgba(91,33,182,.3);font-weight:600;}
+.ans-body a.bible-link:hover{text-decoration-color:var(--pu);}
+
+/* KIDS GAME BUILDER */
+.game-builder{background:linear-gradient(135deg,#7C3AED,#A855F7);border-radius:18px;padding:18px;color:#fff;margin-bottom:16px;}
+.game-builder-title{font-family:"Playfair Display",serif;font-size:17px;font-weight:800;margin-bottom:4px;}
+.game-builder-sub{font-size:12px;opacity:.8;margin-bottom:14px;}
+.char-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.char-btn{background:rgba(255,255,255,.15);border:2px solid transparent;border-radius:12px;padding:8px 10px;font-size:22px;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.char-btn.sel{border-color:#fff;background:rgba(255,255,255,.3);}
+.block-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
+.block-btn{background:rgba(255,255,255,.12);border:none;border-radius:10px;padding:9px 8px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;font-family:"Nunito",sans-serif;transition:all .15s;text-align:left;display:flex;align-items:center;gap:6px;}
+.block-btn.sel{background:rgba(255,255,255,.3);outline:2px solid rgba(255,255,255,.6);}
+.run-btn{width:100%;padding:12px;background:#fff;color:#7C3AED;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:"Nunito",sans-serif;margin-bottom:10px;}
+.game-result{background:rgba(0,0,0,.25);border-radius:12px;padding:12px;font-size:13px;line-height:1.7;min-height:60px;display:none;}
+.game-result.show{display:block;}
+.game-links{display:flex;gap:8px;margin-top:10px;}
+.game-link{flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:8px;text-align:center;font-size:11px;font-weight:700;color:#fff;text-decoration:none;cursor:pointer;}
+
 /* HISTORY */
 #s-history{background:var(--bg);}
 .hist-hdr{padding:16px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd);background:var(--sf);flex-shrink:0;}
@@ -749,6 +780,38 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:800;margin-bottom:4px;">Intro to AI & Robotics</div>
     <div style="font-size:12px;opacity:.8;">Learn how computers think — step by step!</div>
   </div>
+  <!-- GAME CREATOR STUDIO -->
+  <div class="game-builder" id="game-builder">
+    <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:6px;font-family:'JetBrains Mono',monospace;">🎮 New Feature</div>
+    <div class="game-builder-title">Game Creator Studio</div>
+    <div class="game-builder-sub">Pick a character, tap blocks, run your game!</div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:7px;text-transform:uppercase;letter-spacing:.8px;">1. Pick your character</div>
+    <div class="char-row" id="char-row">
+      <div class="char-btn" onclick="pickChar(this,'🦁')">🦁</div>
+      <div class="char-btn" onclick="pickChar(this,'🐘')">🐘</div>
+      <div class="char-btn" onclick="pickChar(this,'🦅')">🦅</div>
+      <div class="char-btn" onclick="pickChar(this,'🤖')">🤖</div>
+      <div class="char-btn" onclick="pickChar(this,'⭐')">⭐</div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:7px;text-transform:uppercase;letter-spacing:.8px;">2. Tap your code blocks</div>
+    <div class="block-grid" id="block-grid">
+      <button class="block-btn" onclick="toggleBlock(this,'Move Forward')">➡️ Move Forward</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Turn Around')">🔄 Turn Around</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Jump!')">⬆️ Jump!</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Say Hello')">👋 Say Hello</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Change Colour')">🎨 Change Colour</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Make a Sound')">🔊 Make a Sound</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Repeat x3')">🔁 Repeat x3</button>
+      <button class="block-btn" onclick="toggleBlock(this,'Wait & Think')">⏸️ Wait & Think</button>
+    </div>
+    <button class="run-btn" onclick="runGame()">▶ Run My Game!</button>
+    <div class="game-result" id="game-result"></div>
+    <div class="game-links">
+      <a class="game-link" href="https://scratch.mit.edu" target="_blank">🐱 Try Scratch</a>
+      <a class="game-link" href="https://code.org" target="_blank">💻 Code.org</a>
+    </div>
+  </div>
+
   <div class="slbl">Learning Areas</div>
   <div class="kids-grid">
     <div class="kc" style="background:#DBEAFE;border-color:#BFDBFE;" onclick="openVertical('kids-science')"><span class="kc-icon">🔬</span><div class="kc-name">Science</div><div class="kc-desc">Experiments, nature</div></div>
@@ -1154,6 +1217,7 @@ function buildSysPrompt(d){
 // SEND QUESTION
 function sendQuestion(){
   var txt=g('ask-input').value.trim();if(!txt)return;
+  LAST_Q=txt;
   g('ask-input').value='';
   var d=VD[CV]||VD.farming;
   g('ans-question').textContent=txt;
@@ -1211,6 +1275,7 @@ function showSteps(ns){
 }
 
 // RENDER ANSWER
+var LAST_Q='';
 function renderAnswer(txt,d,used){
   g('live-dot').style.animationPlayState='paused';
   g('live-txt').textContent=used?'✓ Live web data included':'✓ Answer ready';
@@ -1227,14 +1292,103 @@ function renderAnswer(txt,d,used){
       '<div class="act-pill">👍 Helpful</div><div class="act-pill">🔄 Follow-up</div>'+
     '</div>';
   g('ans-body').scrollTop=0;
+  // Generate follow-up suggestions in background
+  if(LAST_Q)generateFollowUps(LAST_Q,txt,CV);
 }
 function renderError(msg){
   g('live-dot').style.animationPlayState='paused';g('live-txt').textContent='⚠ Error';
   g('ans-bubble').innerHTML='<div class="err-card"><div class="err-title">⚠ Could not get answer</div><div class="err-msg">'+(msg||'Check your connection and try again.')+'</div></div>';
 }
 function fmtAns(t){
-  var h=t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/#{1,3} (.+)/g,'<strong>$1</strong>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  // 1. Escape HTML entities first
+  var h=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // 2. Markdown formatting
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  h=h.replace(/#{1,3} (.+)/g,'<strong>$1</strong>');
+  // 3. Bible references → purple BibleGateway links
+  h=h.replace(/\b(Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalms?|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation) (\d+:\d+(?:-\d+)?)/g, function(match,book,ref){
+    var encoded=encodeURIComponent(book+' '+ref);
+    return '<a class="bible-link" href="https://www.biblegateway.com/passage/?search='+encoded+'&version=NKJV" target="_blank">'+match+'</a>';
+  });
+  // 4. URLs → blue clickable links (not already inside href)
+  h=h.replace(/(?<!href=["'])https?:\/\/[^\s<>"]+/g,function(url){
+    var disp=url.replace(/^https?:\/\//,'').replace(/\/$/,'');
+    if(disp.length>40)disp=disp.substring(0,38)+'…';
+    return '<a class="url-link" href="'+url+'" target="_blank" rel="noopener">'+disp+'</a>';
+  });
+  // 5. Paragraphs
+  h=h.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
   return '<p>'+h+'</p>';
+}
+
+// GAME CREATOR STUDIO
+var GC_CHAR='🤖', GC_BLOCKS=[];
+function pickChar(el,ch){
+  GC_CHAR=ch;
+  document.querySelectorAll('.char-btn').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');
+}
+function toggleBlock(el,b){
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel')){if(GC_BLOCKS.indexOf(b)<0)GC_BLOCKS.push(b);}
+  else{GC_BLOCKS=GC_BLOCKS.filter(function(x){return x!==b;});}
+}
+function runGame(){
+  var res=g('game-result');
+  if(!GC_BLOCKS.length){res.textContent='👆 Tap some code blocks first, then press Run!';res.classList.add('show');return;}
+  var stories={
+    'Move Forward':'moves forward bravely',
+    'Turn Around':'spins around excitedly',
+    'Jump!':'leaps high into the air',
+    'Say Hello':'waves and shouts "Hello World!"',
+    'Change Colour':'glows with rainbow colours',
+    'Make a Sound':'makes a fun beep-boop sound',
+    'Repeat x3':'does it again… and again… and again!',
+    'Wait & Think':'pauses and thinks of a great idea 💡'
+  };
+  var story=GC_CHAR+' ';
+  var parts=GC_BLOCKS.map(function(b){return stories[b]||b;});
+  if(parts.length===1)story+=parts[0]+'.';
+  else if(parts.length===2)story+=parts[0]+', then '+parts[1]+'.';
+  else story+=parts.slice(0,-1).join(', ')+', and finally '+parts[parts.length-1]+'.';
+  res.innerHTML='🎮 <strong>Your Game!</strong><br><br>'+story+'<br><br>🌟 Amazing coding! You used <strong>'+GC_BLOCKS.length+' code block'+(GC_BLOCKS.length>1?'s':'')+'</strong>. Ready to build a bigger game?';
+  res.classList.add('show');
+}
+
+// GENERATE FOLLOW-UP SUGGESTIONS
+function generateFollowUps(question, answer, vertical){
+  var d=VD[vertical]||VD.farming;
+  var prompt='The user asked: "'+question+'"\n\nThe AI answered: "'+answer.substring(0,600)+'"\n\nGenerate exactly 3 short follow-up questions the user might naturally want to ask next, based on this conversation. Each question should be practical and specific to the vertical: '+d.name+'. Return ONLY a JSON array of 3 strings, no other text. Example: ["Question 1?","Question 2?","Question 3?"]';
+  fetch('/api/ask',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:200,messages:[{role:'user',content:prompt}]})
+  }).then(function(r){return r.json();}).then(function(data){
+    if(data.error)return;
+    var txt=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('').trim();
+    txt=txt.replace(/```json|```/g,'').trim();
+    var qs=JSON.parse(txt);
+    if(!Array.isArray(qs)||!qs.length)return;
+    renderFollowUpSuggestions(qs);
+  }).catch(function(){/* silently fail */});
+}
+function renderFollowUpSuggestions(qs){
+  var bub=g('ans-bubble');
+  if(!bub)return;
+  var existing=bub.querySelector('.fu-sug-wrap');
+  if(existing)existing.remove();
+  var wrap=document.createElement('div');
+  wrap.className='fu-sug-wrap';
+  wrap.innerHTML='<div class="fu-sug-lbl">You might also ask</div>'+
+    '<div class="fu-sug-list">'+qs.map(function(q){
+      return '<button class="fu-sug-btn" onclick="askFollowUpSug(\''+q.replace(/'/g,"\\'")+'\')">'+ q +'</button>';
+    }).join('')+'</div>'+
+    '<div class="fu-sug-divider">— or type your own —</div>';
+  bub.appendChild(wrap);
+}
+function askFollowUpSug(q){
+  g('followup-input').value=q;
+  sendFollowUp();
 }
 </script>
 </body>
