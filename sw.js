@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v2
-const CACHE = 'lifedesk-v2';
+// LifeDesk Service Worker v3 — cache bust
+const CACHE = 'lifedesk-v3';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
@@ -24,22 +24,28 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
-  if(e.request.url.includes('/api/') || 
-     e.request.url.includes('firestore') || 
-     e.request.url.includes('googleapis.com') ||
-     e.request.url.includes('gstatic.com') ||
-     e.request.url.includes('paystack')) {
-    return; // Never cache API/Firebase/Paystack calls
+  if(e.request.url.includes('/api/') ||
+     e.request.url.includes('firestore') ||
+     e.request.url.includes('googleapis') ||
+     e.request.url.includes('gstatic') ||
+     e.request.url.includes('paystack') ||
+     e.request.url.includes('anthropic') ||
+     e.request.url.includes('exchangerate')) {
+    return; // Never cache API calls
   }
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       return cached || fetch(e.request).then(function(res) {
         if(res && res.status === 200 && e.request.method === 'GET') {
           var clone = res.clone();
-          caches.open(CACHE).then(function(cache){ cache.put(e.request, clone); });
+          caches.open(CACHE).then(function(cache){
+            cache.put(e.request, clone);
+          });
         }
         return res;
       });
-    }).catch(function(){ return caches.match('/index.html'); })
+    }).catch(function(){
+      return caches.match('/index.html');
+    })
   );
 });
