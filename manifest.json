@@ -1,0 +1,21 @@
+{
+  "name": "LifeDesk — AI Life Advisor",
+  "short_name": "LifeDesk",
+  "description": "Your AI life advisor for farming, health, education, business, faith and more. 19 verticals, 32 languages.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071209",
+  "theme_color": "#16A34A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231A5C2E'/><text y='.9em' font-size='80' x='10'>&#127807;</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "education", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr"
+}
