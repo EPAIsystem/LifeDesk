@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.netlify.livedesk_ai.twa",
+    "sha256_cert_fingerprints": ["EC:18:32:12:93:AC:05:D9:62:C1:1D:A8:4B:FF:C8:F4:3D:51:64:F9:51:20:F2:B7:F6:41:AC:ED:A4:13:E1:57"]
+  }
+}]
