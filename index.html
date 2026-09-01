@@ -5130,15 +5130,436 @@ function deleteUserAccount() {
 // Tapping a card pre-fills the ask bar with a context prompt
 // ================================================================
 
-// ── VERTICAL INTRO SCREEN CSS ────────────────────────────────────────────────
+var VERTICAL_SERVICES = {
 
+  farming: {
+    tagline: 'Your AI farming expert — from soil to market, seed to harvest',
+    services: [
+      { icon: '🌱', name: 'Crop Advisor',            prompt: 'As my Crop Advisor, advise me on the best crops to grow and how to manage them: ' },
+      { icon: '🐛', name: 'Pest & Disease Identifier', prompt: 'Help me identify and treat this crop pest or disease: ' },
+      { icon: '📊', name: 'Market Price Scout',      prompt: 'What are the current market prices for this crop in my area, and where should I sell: ' },
+      { icon: '🌧️', name: 'Soil & Weather Guide',   prompt: 'Give me soil management and weather-based farming advice for: ' },
+      { icon: '🏦', name: 'Subsidy & Loan Finder',  prompt: 'What farming subsidies, grants or loans are available to me as a farmer in Ghana: ' },
+      { icon: '🐄', name: 'Livestock Advisor',       prompt: 'As my Livestock Advisor, help me with this animal farming question: ' },
+      { icon: '💧', name: 'Irrigation Guide',        prompt: 'Advise me on irrigation methods and water management for my farm: ' },
+      { icon: '📦', name: 'Post-Harvest & Storage',  prompt: 'How do I properly store and add value to my harvested crops: ' },
+    ]
+  },
+
+  religion: {
+    tagline: 'Your AI spiritual companion — for study, prayer and growth',
+    services: [
+      { icon: '📖', name: 'Scripture Study',          prompt: 'Help me study and understand this scripture passage: ' },
+      { icon: '🎤', name: 'Sermon Preparation',       prompt: 'Help me prepare a sermon or message on this topic: ' },
+      { icon: '🙏', name: 'Prayer Guide',             prompt: 'Guide me in prayer for this situation: ' },
+      { icon: '✍️', name: 'Devotional Writer',        prompt: 'Write a daily devotional on this theme or scripture: ' },
+      { icon: '❓', name: 'Theology Q&A',             prompt: 'Explain this theological question or doctrine: ' },
+      { icon: '💬', name: 'Spiritual Counsellor',    prompt: 'As my spiritual counsellor, help me navigate this personal challenge: ' },
+      { icon: '📜', name: 'Prophecy & End Times',    prompt: 'Explain this prophetic or eschatological topic from Scripture: ' },
+      { icon: '🌍', name: 'Mission & Evangelism',    prompt: 'Help me with evangelism strategies or mission planning for: ' },
+    ]
+  },
+
+  business: {
+    tagline: 'Your AI business partner — from idea to enterprise',
+    services: [
+      { icon: '📋', name: 'Business Plan Writer',    prompt: 'Help me write or improve a business plan for: ' },
+      { icon: '🔍', name: 'Market Research',         prompt: 'Conduct market research and analysis for this business idea: ' },
+      { icon: '💹', name: 'Financial Projector',     prompt: 'Help me create financial projections and cash flow for: ' },
+      { icon: '🎯', name: 'Marketing Strategist',    prompt: 'Create a marketing strategy for my business: ' },
+      { icon: '🤝', name: 'Pitch Coach',             prompt: 'Help me prepare and practise my business pitch for investors: ' },
+      { icon: '📑', name: 'Legal & Compliance',      prompt: 'What legal requirements and compliance issues should I know for my business in Ghana: ' },
+      { icon: '🚀', name: 'Startup Advisor',         prompt: 'As my startup advisor, give me practical advice on: ' },
+      { icon: '📈', name: 'Growth Strategist',       prompt: 'Help me create a growth strategy to scale my business: ' },
+    ]
+  },
+
+  health: {
+    tagline: 'Your AI health companion — conventional, natural and regenerative',
+    services: [
+      { icon: '🩺', name: 'Symptom Checker',         prompt: 'Help me understand these symptoms and what they might mean: ' },
+      { icon: '🥗', name: 'Nutrition Guide',          prompt: 'Give me nutritional advice and a diet plan for: ' },
+      { icon: '💊', name: 'Medication Info',          prompt: 'Explain this medication, its uses, dosage and side effects: ' },
+      { icon: '🧠', name: 'Mental Health Support',   prompt: 'I need support and guidance for this mental health challenge: ' },
+      { icon: '🌿', name: 'Natural & Herbal Remedies', prompt: 'What natural or herbal remedies are available for: ' },
+      { icon: '♻️', name: 'Regenerative Health',     prompt: 'Advise me on regenerative health practices and lifestyle changes for: ' },
+      { icon: '🏃', name: 'Fitness Planner',         prompt: 'Create a personalised fitness and exercise plan for: ' },
+      { icon: '🤱', name: 'Maternal & Child Health', prompt: 'Give me health guidance on this maternal or child health matter: ' },
+    ]
+  },
+
+  education: {
+    tagline: 'Your AI private teacher — every subject, every level, 24/7',
+    services: [
+      { icon: '👨‍🏫', name: 'AI Private Teacher',     prompt: 'Teach me this subject or topic step by step: ' },
+      { icon: '📝', name: 'Homework Assistant',       prompt: 'Help me understand and complete this homework question: ' },
+      { icon: '🎓', name: 'Exam Prep Coach',          prompt: 'Help me prepare for my upcoming exam on: ' },
+      { icon: '🔬', name: 'Project Supervisor',       prompt: 'Guide me on my academic project or research on: ' },
+      { icon: '📅', name: 'Study Time Scheduler',    prompt: 'Help me create an effective study timetable for: ' },
+      { icon: '📚', name: 'Syllabus Coach',           prompt: 'Break down and explain this syllabus or curriculum for me: ' },
+      { icon: '🧮', name: 'Maths Problem Solver',    prompt: 'Solve and explain this maths problem step by step: ' },
+      { icon: '🌐', name: 'Language Tutor',           prompt: 'Teach me or help me practise this language: ' },
+    ]
+  },
+
+  finance: {
+    tagline: 'Your AI financial advisor — budgeting, saving and investing',
+    services: [
+      { icon: '💳', name: 'Budget Planner',           prompt: 'Help me create a monthly budget based on my income and expenses: ' },
+      { icon: '📈', name: 'Investment Guide',         prompt: 'Advise me on investment options and strategies for: ' },
+      { icon: '🏦', name: 'Loan Calculator',          prompt: 'Help me understand and calculate this loan, interest and repayment: ' },
+      { icon: '🐖', name: 'Savings Coach',            prompt: 'Help me create a savings plan to achieve this financial goal: ' },
+      { icon: '📊', name: 'Tax Advisor',              prompt: 'Explain my tax obligations and how to file taxes in Ghana: ' },
+      { icon: '₿',  name: 'Crypto & Forex Info',     prompt: 'Explain this cryptocurrency or forex trading concept: ' },
+      { icon: '💸', name: 'Debt Manager',             prompt: 'Help me create a plan to manage and pay off this debt: ' },
+      { icon: '🏠', name: 'Property Finance',         prompt: 'Advise me on financing options for buying property or land: ' },
+    ]
+  },
+
+  legal: {
+    tagline: 'Your AI legal guide — know your rights, protect yourself',
+    services: [
+      { icon: '⚖️', name: 'Know Your Rights',         prompt: 'Explain my legal rights in this situation: ' },
+      { icon: '📄', name: 'Contract Reviewer',        prompt: 'Review and explain this contract or agreement for me: ' },
+      { icon: '🛡️', name: 'Consumer Protection',     prompt: 'What are my consumer rights and how do I take action on: ' },
+      { icon: '🏡', name: 'Land & Property Law',      prompt: 'Explain the land and property laws relevant to this situation in Ghana: ' },
+      { icon: '👔', name: 'Employment Law',           prompt: 'What are my rights and obligations under employment law for: ' },
+      { icon: '👨‍👩‍👧', name: 'Family Law Guide',    prompt: 'Explain the family law relevant to this matter: ' },
+      { icon: '🚔', name: 'Police & Court Guide',     prompt: 'Guide me on how to handle this police or court situation: ' },
+      { icon: '📋', name: 'Business Registration',   prompt: 'Guide me through the process of registering a business in Ghana: ' },
+    ]
+  },
+
+  tourism: {
+    tagline: 'Your AI travel companion — explore Ghana and the world',
+    services: [
+      { icon: '🗺️', name: 'Destination Guide',        prompt: 'Tell me everything I need to know about visiting this destination: ' },
+      { icon: '🛂', name: 'Visa & Travel Docs',       prompt: 'What visa and travel documents do I need for: ' },
+      { icon: '🎭', name: 'Local Culture Guide',      prompt: 'Tell me about the culture, customs and etiquette for: ' },
+      { icon: '💰', name: 'Budget Travel Planner',    prompt: 'Help me plan an affordable travel itinerary for: ' },
+      { icon: '🏨', name: 'Accommodation Finder',     prompt: 'Recommend accommodation options and what to look for in: ' },
+      { icon: '🛡️', name: 'Travel Safety Advisor',   prompt: 'What are the safety considerations and precautions for travelling to: ' },
+      { icon: '💎', name: 'Hidden Gems',              prompt: 'Tell me about off-the-beaten-path and hidden gem destinations in: ' },
+      { icon: '📸', name: 'Ghana Tourism',            prompt: 'Tell me about tourist attractions, culture and experiences in Ghana: ' },
+    ]
+  },
+
+  home: {
+    tagline: 'Your AI home and family expert — from parenting to decor',
+    services: [
+      { icon: '👶', name: 'Parenting Coach',          prompt: 'As my parenting coach, advise me on this child-rearing challenge: ' },
+      { icon: '💑', name: 'Marriage Counsellor',      prompt: 'Give me guidance on this marriage or relationship matter: ' },
+      { icon: '🔧', name: 'Home Repair Guide',        prompt: 'Help me fix or maintain this home repair issue: ' },
+      { icon: '🛋️', name: 'Interior Decor Advisor',  prompt: 'Help me with interior design and decor ideas for: ' },
+      { icon: '🎨', name: 'Home Styling',             prompt: 'Give me home styling advice and colour scheme recommendations for: ' },
+      { icon: '🍳', name: 'Cooking & Nutrition',      prompt: 'Give me a recipe and nutritional advice for: ' },
+      { icon: '👴', name: 'Elder Care Advisor',       prompt: 'Advise me on caring for an elderly family member with: ' },
+      { icon: '💰', name: 'Family Budget',            prompt: 'Help me create a family budget and financial plan: ' },
+    ]
+  },
+
+  tech: {
+    tagline: 'Your AI tech guide — troubleshoot, learn and build',
+    services: [
+      { icon: '🔧', name: 'Tech Troubleshooter',     prompt: 'Help me troubleshoot and fix this tech problem: ' },
+      { icon: '📱', name: 'App & Software Guide',    prompt: 'Help me understand, install or use this app or software: ' },
+      { icon: '💻', name: 'Coding Tutor',            prompt: 'Teach me or help me with this programming problem: ' },
+      { icon: '🔒', name: 'Cybersecurity Advisor',  prompt: 'Advise me on cybersecurity, privacy and staying safe online: ' },
+      { icon: '📣', name: 'Social Media Coach',      prompt: 'Help me grow and manage my social media for: ' },
+      { icon: '🤖', name: 'AI & Automation Guide',  prompt: 'Help me understand and use AI tools for: ' },
+      { icon: '🌐', name: 'Digital Marketing',       prompt: 'Create a digital marketing strategy for: ' },
+      { icon: '🛒', name: 'E-Commerce Guide',        prompt: 'Help me set up or grow my online business and e-commerce: ' },
+    ]
+  },
+
+  luxury: {
+    tagline: 'Your AI concierge — premium living, elevated experiences',
+    services: [
+      { icon: '✈️', name: 'Premium Travel',           prompt: 'Plan a luxury travel experience for: ' },
+      { icon: '🍽️', name: 'Fine Dining Guide',       prompt: 'Recommend fine dining experiences and restaurants for: ' },
+      { icon: '💎', name: 'Luxury Brand Advisor',    prompt: 'Advise me on luxury brands, products and investments for: ' },
+      { icon: '🎪', name: 'Event Planner',            prompt: 'Help me plan a premium or luxury event for: ' },
+      { icon: '👗', name: 'Personal Stylist',         prompt: 'Give me personal styling and fashion advice for: ' },
+      { icon: '💰', name: 'Wealth Management',       prompt: 'Advise me on wealth management and high-value investments: ' },
+      { icon: '🏠', name: 'Luxury Real Estate',      prompt: 'Advise me on luxury property and high-end real estate: ' },
+      { icon: '🌿', name: 'Wellness & Spa',          prompt: 'Recommend premium wellness, spa and self-care experiences: ' },
+    ]
+  },
+
+  food: {
+    tagline: 'Your AI food expert — recipes, nutrition and culinary arts',
+    services: [
+      { icon: '🍳', name: 'Recipe Creator',           prompt: 'Create a recipe for me using these ingredients or for this occasion: ' },
+      { icon: '📅', name: 'Meal Planner',             prompt: 'Create a weekly meal plan for me based on: ' },
+      { icon: '📊', name: 'Nutritional Analysis',    prompt: 'Analyse the nutritional content of this meal or food: ' },
+      { icon: '🥗', name: 'Dietary Coach',            prompt: 'Give me dietary advice for this health goal or condition: ' },
+      { icon: '🌍', name: 'African Cuisine Guide',   prompt: 'Tell me about this African dish, its preparation and cultural significance: ' },
+      { icon: '⚠️', name: 'Food Safety Advisor',    prompt: 'Advise me on food safety, storage and hygiene for: ' },
+      { icon: '⚖️', name: 'Weight Management',       prompt: 'Help me with a weight management plan through diet: ' },
+      { icon: '🍰', name: 'Baking & Pastry',         prompt: 'Teach me how to bake or make this pastry or dessert: ' },
+    ]
+  },
+
+  sports: {
+    tagline: 'Your AI sports and fitness coach — train smarter, perform better',
+    services: [
+      { icon: '🏋️', name: 'Personal Trainer',         prompt: 'Create a personalised workout plan for my fitness goal: ' },
+      { icon: '📅', name: 'Workout Planner',          prompt: 'Plan my weekly workout schedule based on my goals and equipment: ' },
+      { icon: '🥩', name: 'Sports Nutrition',         prompt: 'Give me a sports nutrition plan for my training: ' },
+      { icon: '🩹', name: 'Injury Recovery',          prompt: 'Help me with recovery and rehabilitation for this sports injury: ' },
+      { icon: '⚽', name: 'Match Analysis',           prompt: 'Analyse this match, team or player performance: ' },
+      { icon: '👦', name: 'Youth Sports Guide',       prompt: 'Advise me on youth sports development and training for: ' },
+      { icon: '🏆', name: 'Competition Prep',         prompt: 'Help me prepare physically and mentally for this competition: ' },
+      { icon: '🧘', name: 'Mind & Body Coach',        prompt: 'Guide me on mindfulness, mental resilience and sports psychology: ' },
+    ]
+  },
+
+  environment: {
+    tagline: 'Your AI environmental guide — green living, clean future',
+    services: [
+      { icon: '🌡️', name: 'Climate Advisor',          prompt: 'Explain climate change impacts and what I can do about: ' },
+      { icon: '🌿', name: 'Green Farming Guide',      prompt: 'Advise me on sustainable and eco-friendly farming practices: ' },
+      { icon: '☀️', name: 'Renewable Energy',         prompt: 'Guide me on solar, wind or other renewable energy options for: ' },
+      { icon: '♻️', name: 'Waste Management',         prompt: 'Help me with waste reduction, recycling and management for: ' },
+      { icon: '💧', name: 'Water Conservation',       prompt: 'Advise me on water conservation and management strategies: ' },
+      { icon: '🌳', name: 'Landscape Design',         prompt: 'Help me design a beautiful and functional landscape or garden for: ' },
+      { icon: '🌸', name: 'Garden Planning',          prompt: 'Create a garden plan with the right plants for my space and climate: ' },
+      { icon: '🏭', name: 'Eco-Business Guide',       prompt: 'Help me make my business more sustainable and environmentally friendly: ' },
+    ]
+  },
+
+  arts: {
+    tagline: 'Your AI creative partner — storytelling, music and culture',
+    services: [
+      { icon: '✍️', name: 'Creative Writing Coach',  prompt: 'Help me write or improve this creative piece: ' },
+      { icon: '🎵', name: 'Music Theory Guide',       prompt: 'Teach me or help me with this music theory or composition: ' },
+      { icon: '🎨', name: 'Visual Arts Guide',        prompt: 'Guide me on techniques, styles and history for: ' },
+      { icon: '🏛️', name: 'Cultural Heritage',        prompt: 'Tell me about the cultural heritage and history of: ' },
+      { icon: '📸', name: 'Photography Guide',        prompt: 'Teach me photography techniques and composition for: ' },
+      { icon: '🎭', name: 'Drama & Storytelling',    prompt: 'Help me develop this drama, script or story: ' },
+      { icon: '🎪', name: 'Event Curation',           prompt: 'Help me plan and curate this cultural or arts event: ' },
+      { icon: '📚', name: 'Literary Analysis',        prompt: 'Analyse this literary work, poem or text: ' },
+    ]
+  },
+
+  youth: {
+    tagline: 'Your AI career and youth development coach — build your future',
+    services: [
+      { icon: '📄', name: 'CV & Cover Letter',        prompt: 'Help me write or improve my CV or cover letter for: ' },
+      { icon: '🎤', name: 'Interview Coach',          prompt: 'Help me prepare for a job interview for this position: ' },
+      { icon: '🗺️', name: 'Career Path Advisor',      prompt: 'Help me choose and plan a career path based on my interests: ' },
+      { icon: '🎓', name: 'Scholarship Finder',       prompt: 'Find scholarship and funding opportunities for: ' },
+      { icon: '💡', name: 'Skills Development',       prompt: 'Help me develop these skills for my career or business: ' },
+      { icon: '🚀', name: 'Youth Entrepreneurship',  prompt: 'Guide me in starting and growing a business as a young entrepreneur: ' },
+      { icon: '👑', name: 'Leadership Coach',         prompt: 'Coach me on developing leadership skills for: ' },
+      { icon: '🌍', name: 'Study Abroad Guide',      prompt: 'Guide me on studying abroad opportunities and applications for: ' },
+    ]
+  },
+
+  women: {
+    tagline: 'Your AI women\'s empowerment advisor — health, rights and leadership',
+    services: [
+      { icon: '🩺', name: 'Women\'s Health',           prompt: 'Give me women\'s health advice and information on: ' },
+      { icon: '💰', name: 'Financial Independence',   prompt: 'Advise me on building financial independence as a woman: ' },
+      { icon: '🏢', name: 'Business for Women',       prompt: 'Help me start or grow a business as a woman entrepreneur: ' },
+      { icon: '⚖️', name: 'Women\'s Legal Rights',    prompt: 'Explain my legal rights as a woman in this situation: ' },
+      { icon: '🤱', name: 'Maternal Guidance',        prompt: 'Give me guidance on pregnancy, motherhood and maternal care: ' },
+      { icon: '🛡️', name: 'Safety & Self-Defence',   prompt: 'Advise me on personal safety and self-defence for women: ' },
+      { icon: '👑', name: 'Leadership for Women',     prompt: 'Coach me on leadership and career advancement as a woman: ' },
+      { icon: '💪', name: 'Women\'s Wellness',        prompt: 'Create a wellness and self-care plan for my wellbeing: ' },
+    ]
+  },
+
+  realestate: {
+    tagline: 'Your AI property advisor — buy, sell, build and invest',
+    services: [
+      { icon: '🏠', name: 'Property Valuation',       prompt: 'Help me assess the value of this property or land: ' },
+      { icon: '🤝', name: 'Buying & Selling Guide',  prompt: 'Guide me through the process of buying or selling property in Ghana: ' },
+      { icon: '🏘️', name: 'Rental Advisor',           prompt: 'Advise me on renting property, setting prices and managing tenants: ' },
+      { icon: '📜', name: 'Land Rights Ghana',        prompt: 'Explain land rights, documentation and legal processes in Ghana for: ' },
+      { icon: '🏗️', name: 'Building & Construction', prompt: 'Guide me on building construction, planning and contractors for: ' },
+      { icon: '💹', name: 'Investment Property',      prompt: 'Advise me on property investment strategy and returns for: ' },
+      { icon: '👤', name: 'Tenant Rights',            prompt: 'Explain my rights as a tenant in this situation: ' },
+      { icon: '📐', name: 'Room & Space Planner',    prompt: 'Help me plan the layout and design of this space or room: ' },
+    ]
+  },
+
+  media: {
+    tagline: 'Your AI communications coach — speak, write and influence',
+    services: [
+      { icon: '🎤', name: 'Public Speaking',          prompt: 'Help me prepare and practise this speech or presentation: ' },
+      { icon: '📱', name: 'Content Creator',          prompt: 'Help me create engaging content for this platform or audience: ' },
+      { icon: '📰', name: 'Journalism Guide',         prompt: 'Help me write or research this news story or article: ' },
+      { icon: '🎙️', name: 'Podcast & Radio Tips',    prompt: 'Guide me on starting or improving my podcast or radio show: ' },
+      { icon: '✍️', name: 'Copywriter',               prompt: 'Write compelling copy for this product, service or campaign: ' },
+      { icon: '📖', name: 'Brand Storytelling',       prompt: 'Help me craft my brand story and messaging for: ' },
+      { icon: '🚨', name: 'Crisis Communication',    prompt: 'Help me handle this communication crisis or sensitive matter: ' },
+      { icon: '🌐', name: 'PR & Media Relations',    prompt: 'Guide me on public relations and media engagement for: ' },
+    ]
+  }
+
+};
+
+// ── VERTICAL INTRO SCREEN CSS ────────────────────────────────────────────────
+(function() {
+  var css = `
+/* ── VERTICAL INTRO SCREEN ── */
+.vi-screen { display:none; flex-direction:column; flex:1; overflow:hidden; background:var(--bg); }
+.vi-screen.active { display:flex; }
+.vi-hdr {
+  padding:16px 18px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--bd);
+  background:var(--sf);flex-shrink:0;
+  position:sticky;top:0;z-index:40;
+}
+.vi-hdr-icon { font-size:22px; }
+.vi-hdr-name { font-size:17px;font-weight:800;color:var(--tx);flex:1; }
+.vi-tagline {
+  background:linear-gradient(135deg,#0D2B18,#1A5C2E);
+  padding:20px 18px;
+  margin-bottom:0;
+  flex-shrink:0;
+}
+.vi-tagline-text {
+  font-size:14px;font-weight:700;color:#4ADE80;
+  line-height:1.5;font-style:italic;
+}
+.vi-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding:16px 14px;
+}
+.vi-card {
+  background:var(--sf);
+  border:1.5px solid var(--bd);
+  border-radius:14px;
+  padding:14px 12px;
+  cursor:pointer;
+  transition:all .18s;
+  text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.vi-card:active {
+  background:rgba(22,163,74,.15);
+  border-color:var(--pr);
+  transform:scale(.97);
+}
+.vi-card-icon { font-size:28px; line-height:1; }
+.vi-card-name {
+  font-size:12px;font-weight:800;color:var(--tx);
+  line-height:1.3;text-align:center;
+}
+.vi-card-arrow {
+  font-size:11px;color:var(--pr);font-weight:700;margin-top:2px;
+}
+.vi-ask-free {
+  margin:0 14px 20px;
+  background:var(--pr);
+  color:#fff;border:none;border-radius:12px;
+  padding:14px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:'Nunito',sans-serif;
+  width:calc(100% - 28px);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+@media (min-width:1024px) {
+  .vi-grid { grid-template-columns:repeat(4,1fr); gap:14px; padding:24px; }
+  .vi-card { padding:20px 16px; }
+  .vi-card-icon { font-size:36px; }
+  .vi-card-name { font-size:13px; }
+  .vi-tagline { padding:22px 24px; }
+  .vi-tagline-text { font-size:15px; }
+}
+`;
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
 
 // ── VERTICAL INTRO SCREEN FUNCTIONS ─────────────────────────────────────────
+function openVerticalIntro(verticalKey) {
+  var vd_entry = VD && VD[verticalKey];
+  var vs_entry = VERTICAL_SERVICES[verticalKey];
+  if (!vs_entry) {
+    // Fallback to original behavior
+    openVertical(verticalKey);
+    return;
+  }
 
+  // Set current vertical
+  CV = verticalKey;
 
+  // Render the intro screen dynamically into s-vertical-intro
+  var screen = document.getElementById('s-vertical-intro');
+  if (!screen) return;
 
+  var icon = (vd_entry && vd_entry.icon) ? vd_entry.icon : '🌿';
+  var name = (vd_entry && vd_entry.name) ? vd_entry.name : verticalKey;
 
+  // Build service cards HTML
+  var cards = vs_entry.services.map(function(svc) {
+    var safePrompt = svc.prompt.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return (
+      '<div class="vi-card" onclick="startServicePrompt(\'' + safePrompt + '\')">' +
+        '<div class="vi-card-icon">' + svc.icon + '</div>' +
+        '<div class="vi-card-name">' + svc.name + '</div>' +
+        '<div class="vi-card-arrow">Tap to start →</div>' +
+      '</div>'
+    );
+  }).join('');
 
+  screen.innerHTML = (
+    '<div class="vi-hdr">' +
+      '<button class="bk" onclick="showScreen(\'s-home\')">‹</button>' +
+      '<span class="vi-hdr-icon">' + icon + '</span>' +
+      '<span class="vi-hdr-name">' + name + '</span>' +
+    '</div>' +
+    '<div class="vi-tagline">' +
+      '<div class="vi-tagline-text">' + vs_entry.tagline + '</div>' +
+    '</div>' +
+    '<div class="scroll" style="flex:1;overflow-y:auto;">' +
+      '<div class="vi-grid">' + cards + '</div>' +
+      '<button class="vi-ask-free" onclick="openVertical(\'' + verticalKey + '\')">' +
+        '💬 Ask your own question' +
+      '</button>' +
+    '</div>'
+  );
+
+  showScreen('s-vertical-intro');
+}
+
+function startServicePrompt(prompt) {
+  // 1. Open the correct vertical to set header/context properly
+  openVertical(CV);
+  // 2. Pre-fill ask bar with service prompt after vertical is set
+  setTimeout(function() {
+    var inp = document.getElementById('ask-input');
+    if (inp) {
+      inp.value = prompt;
+      inp.focus();
+      inp.style.height = 'auto';
+      inp.style.height = inp.scrollHeight + 'px';
+    }
+    // Clear header search if on desktop
+    var hdrInp = document.getElementById('hdr-search-input');
+    if (hdrInp) hdrInp.value = '';
+  }, 50);
+}
+
+// ── PATCH HOME SCREEN VERTICAL BUTTONS TO USE INTRO ─────────────────────────
+// Override clicks on vertical tiles to show intro instead of going straight to ask
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    // Patch all vertical tile onclick handlers
+    document.querySelectorAll('[onclick*="openVertical"]').forEach(function(el) {
+      var match = el.getAttribute('onclick').match(/openVertical\(['"](\w+)['"]\)/);
+      if (match && match[1] && VERTICAL_SERVICES[match[1]]) {
+        el.setAttribute('onclick', 'openVerticalIntro(\'' + match[1] + '\')');
+      }
+    });
+  }, 500);
+});
 
 
 // ================================================================
