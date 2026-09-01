@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v5 — cache bust
-const CACHE = 'lifedesk-v5';
+// LifeDesk Service Worker v6 — cache bust
+const CACHE = 'lifedesk-v6';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
