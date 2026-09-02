@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v11 — cache bust
-const CACHE = 'lifedesk-v11';
+// LifeDesk Service Worker v12 — theme fix, dual-currency pricing, location-aware Farm Calendar
+const CACHE = 'lifedesk-v12';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
