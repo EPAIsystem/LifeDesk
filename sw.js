@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v12 — theme fix, dual-currency pricing, location-aware Farm Calendar
-const CACHE = 'lifedesk-v12';
+// LifeDesk Service Worker v13 — Peki District removal, theme-aware banners, working locality/faith/search pickers, working downgrade, fixed image visualise, region-picker modal
+const CACHE = 'lifedesk-v13';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
