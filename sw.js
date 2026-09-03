@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v13 — Peki District removal, theme-aware banners, working locality/faith/search pickers, working downgrade, fixed image visualise, region-picker modal
-const CACHE = 'lifedesk-v13';
+// LifeDesk Service Worker v15 — SEO: meta tags, structured data, crawlable landing content, robots.txt, sitemap.xml
+const CACHE = 'lifedesk-v15';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
