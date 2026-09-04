@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v15 — SEO: meta tags, structured data, crawlable landing content, robots.txt, sitemap.xml
-const CACHE = 'lifedesk-v15';
+// LifeDesk Service Worker v17 — expanded country list (8 → 25) plus free-text "Other" fallback for any country, in both onboarding and Profile locality
+const CACHE = 'lifedesk-v17';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
