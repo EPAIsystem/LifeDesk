@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v17 — expanded country list (8 → 25) plus free-text "Other" fallback for any country, in both onboarding and Profile locality
-const CACHE = 'lifedesk-v17';
+// LifeDesk Service Worker v18 — real auto-renewal (saved card charge on expiry), admin subscriber dashboard, free/paid differentiation, Terms & Privacy updated for renewal/Live Search/Visualise/Kids-Youth age fix
+const CACHE = 'lifedesk-v18';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
