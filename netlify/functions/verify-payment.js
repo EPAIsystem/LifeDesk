@@ -131,13 +131,33 @@ exports.handler = async (event) => {
     const expiry = new Date();
     expiry.setMonth(expiry.getMonth() + (billingMode === "annual" ? 12 : 1));
 
-    await db.collection("users").doc(uid).update({
+    // Capture the reusable card authorization (if Paystack granted one and the
+    // card supports it — some cards/banks don't allow reusable charges).
+    // Without this, auto-renewal is structurally impossible: there is no way
+    // to charge the customer again without asking them to re-enter card
+    // details each time.
+    const auth = tx.authorization || {};
+    const updateData = {
       plan: planId,
       planName: planInfo.name,
       planExpiry: admin.firestore.Timestamp.fromDate(expiry),
+      billingMode,
       paystackRef: reference,
+      paystackEmail: tx.customer && tx.customer.email ? tx.customer.email : null,
+      lastChargedAmountPesewas: tx.amount,
+      renewalFailed: false,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    };
+    if (auth.reusable && auth.authorization_code) {
+      updateData.paystackAuth = {
+        authorization_code: auth.authorization_code,
+        last4: auth.last4 || null,
+        bank: auth.bank || null,
+        cardType: auth.card_type || null,
+      };
+    }
+
+    await db.collection("users").doc(uid).update(updateData);
 
     await paymentRef.set({
       uid,
