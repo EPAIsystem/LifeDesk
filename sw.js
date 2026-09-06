@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v19 — payment confirmation screen showing USD, local currency, and the exact GHS charge together before Paystack opens
-const CACHE = 'lifedesk-v19';
+// LifeDesk Service Worker v20 — fixed Profile badge overwriting paid plan with stale trial text; added real server-side trial-expiry enforcement (ask.js previously enforced nothing at all)
+const CACHE = 'lifedesk-v20';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
