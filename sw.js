@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v23 — Ask screen header now shows the active service name (e.g. "Syllabus Coach") instead of reverting to the generic vertical tagline on back-navigation
-const CACHE = 'lifedesk-v23';
+// LifeDesk Service Worker v24 — added real isPaid signal (onboarding never set plan='free', it set the previewed tier name, so paid/free counting and trial-expiry enforcement were both silently broken); fixes Admin Dashboard counts, ask.js trial block, and Profile badge
+const CACHE = 'lifedesk-v24';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
