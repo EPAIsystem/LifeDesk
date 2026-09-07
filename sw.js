@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v22 — whitelist now role-gated (non-admin whitelisted users get premium but no dashboard access, server-side too), Share button on vertical service pages, 19→20 verticals text fixed, service tags now trigger a real AI introduction + clarifying questions instead of just pre-filling the input box
-const CACHE = 'lifedesk-v22';
+// LifeDesk Service Worker v23 — Ask screen header now shows the active service name (e.g. "Syllabus Coach") instead of reverting to the generic vertical tagline on back-navigation
+const CACHE = 'lifedesk-v23';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
