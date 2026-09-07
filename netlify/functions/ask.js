@@ -42,7 +42,7 @@ exports.handler = async (event) => {
         const userSnap = await db.collection("users").doc(userId).get();
         if (userSnap.exists) {
           const u = userSnap.data();
-          if (!u.isPaid && u.trialStart && u.trialStart.seconds) {
+          if (!u.isPaid && !u.adminRole && u.trialStart && u.trialStart.seconds) {
             const elapsedDays = Math.floor((Date.now() / 1000 - u.trialStart.seconds) / 86400);
             if (elapsedDays >= 30) {
               return {
