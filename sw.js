@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v20 — fixed Profile badge overwriting paid plan with stale trial text; added real server-side trial-expiry enforcement (ask.js previously enforced nothing at all)
-const CACHE = 'lifedesk-v20';
+// LifeDesk Service Worker v21 — password reset now surfaces real errors instead of silently failing
+const CACHE = 'lifedesk-v21';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
