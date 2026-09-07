@@ -99,6 +99,7 @@ exports.handler = async () => {
       await doc.ref.update({
         plan: "free",
         planName: "Free",
+        isPaid: false,
         planExpiry: null,
         renewalFailed: true,
         renewalFailReason: "no_saved_card",
@@ -129,6 +130,7 @@ exports.handler = async () => {
         await doc.ref.update({
           plan: "free",
           planName: "Free",
+          isPaid: false,
           planExpiry: null,
           renewalFailed: true,
           renewalFailReason: (result && result.data && result.data.gateway_response) || "charge_declined",
