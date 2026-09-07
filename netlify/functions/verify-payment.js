@@ -140,6 +140,7 @@ exports.handler = async (event) => {
     const updateData = {
       plan: planId,
       planName: planInfo.name,
+      isPaid: true,
       planExpiry: admin.firestore.Timestamp.fromDate(expiry),
       billingMode,
       paystackRef: reference,
