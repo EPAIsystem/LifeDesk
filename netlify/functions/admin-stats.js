@@ -53,16 +53,23 @@ exports.handler = async (event) => {
 
     // Aggregate counts. Firestore's count() aggregation avoids pulling every
     // document just to count them.
+    // NOTE: counts by the isPaid boolean, not the plan string — plan holds
+    // which tier a user is PREVIEWING during their free trial (Core/Standard/
+    // Premium), which is not the same as having actually paid. isPaid is only
+    // set true by a real successful Paystack payment.
     const usersRef = db.collection("users");
-    const [totalSnap, freeSnap, paidSnap, failedSnap] = await Promise.all([
+    const [totalSnap, paidSnap, failedSnap] = await Promise.all([
       usersRef.count().get(),
-      usersRef.where("plan", "==", "free").count().get(),
-      usersRef.where("plan", "!=", "free").count().get(),
+      usersRef.where("isPaid", "==", true).count().get(),
       usersRef.where("renewalFailed", "==", true).count().get(),
     ]);
 
-    // Per-plan breakdown needs actual docs since count() can't group-by.
-    const paidDocsSnap = await usersRef.where("plan", "!=", "free").get();
+    const total = totalSnap.data().count;
+    const paid = paidSnap.data().count;
+    const free = total - paid; // covers isPaid:false AND users who predate this field entirely
+
+    // Per-plan breakdown of ACTUAL paying subscribers only (not trial previews).
+    const paidDocsSnap = await usersRef.where("isPaid", "==", true).get();
     const byPlan = {};
     paidDocsSnap.forEach((doc) => {
       const p = doc.data().planName || doc.data().plan || "Unknown";
@@ -70,9 +77,9 @@ exports.handler = async (event) => {
     });
 
     const result = {
-      total: totalSnap.data().count,
-      free: freeSnap.data().count,
-      paid: paidSnap.data().count,
+      total: total,
+      free: free,
+      paid: paid,
       renewalFailed: failedSnap.data().count,
       byPlan,
     };
