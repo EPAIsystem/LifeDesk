@@ -42,8 +42,12 @@ exports.handler = async (event) => {
     }
 
     // Re-verify admin status server-side — never trust a client-supplied flag here.
+    // Also require role === 'admin' specifically: the 'admins' collection is used
+    // as a general free-access whitelist (family members, team, etc. can be added
+    // with other role values to get free Premium), so existence alone is not
+    // enough to authorize seeing every subscriber's data.
     const adminDoc = await db.collection("admins").doc(decoded.email.toLowerCase()).get();
-    if (!adminDoc.exists) {
+    if (!adminDoc.exists || adminDoc.data().role !== "admin") {
       return { statusCode: 403, headers, body: JSON.stringify({ error: { message: "Not authorized" } }) };
     }
 
