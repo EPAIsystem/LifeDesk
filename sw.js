@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v24 — added real isPaid signal (onboarding never set plan='free', it set the previewed tier name, so paid/free counting and trial-expiry enforcement were both silently broken); fixes Admin Dashboard counts, ask.js trial block, and Profile badge
-const CACHE = 'lifedesk-v24';
+// LifeDesk Service Worker v25 — fixed trial-block wrongly catching admin/whitelisted accounts; vertical page Share now captures an actual image of the layout (via html2canvas) instead of plain text only
+const CACHE = 'lifedesk-v25';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
