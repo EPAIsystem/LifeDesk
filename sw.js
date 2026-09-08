@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v27 — added Install App banner (real Android/Chrome install prompt via beforeinstallprompt, manual Add-to-Home-Screen instructions on iOS Safari), fixed a missed 19→20 verticals reference in manifest.json
-const CACHE = 'lifedesk-v27';
+// LifeDesk Service Worker v28 — sign-in/landing screen banner ("LifeDesk — Your AI advisor for everyday life") now follows the chosen theme instead of a fixed hardcoded green gradient
+const CACHE = 'lifedesk-v28';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
