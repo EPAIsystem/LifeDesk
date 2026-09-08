@@ -1,7 +1,7 @@
 {
   "name": "LifeDesk — AI Life Advisor",
   "short_name": "LifeDesk",
-  "description": "Your AI life advisor for farming, health, education, business, faith and more. 19 verticals, 32 languages.",
+  "description": "Your AI life advisor for farming, health, education, business, faith and more. 20 verticals, 32 languages.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#071209",
