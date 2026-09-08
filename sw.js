@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v25 — fixed trial-block wrongly catching admin/whitelisted accounts; vertical page Share now captures an actual image of the layout (via html2canvas) instead of plain text only
-const CACHE = 'lifedesk-v25';
+// LifeDesk Service Worker v26 — fixed answers being truncated to 500 chars in history (now full answer, up to 8000 chars), Home screen recent items now reopen the actual saved answer instead of a blank vertical, on-device answer cache is now actually used as an offline fallback with a visible consent toggle in Profile
+const CACHE = 'lifedesk-v26';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
