@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v26 — fixed answers being truncated to 500 chars in history (now full answer, up to 8000 chars), Home screen recent items now reopen the actual saved answer instead of a blank vertical, on-device answer cache is now actually used as an offline fallback with a visible consent toggle in Profile
-const CACHE = 'lifedesk-v26';
+// LifeDesk Service Worker v27 — added Install App banner (real Android/Chrome install prompt via beforeinstallprompt, manual Add-to-Home-Screen instructions on iOS Safari), fixed a missed 19→20 verticals reference in manifest.json
+const CACHE = 'lifedesk-v27';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
