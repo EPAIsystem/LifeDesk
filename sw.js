@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v31 — desktop sidebar/right-panel text colors (--ld-text, --ld-muted, --ld-dim) now actually follow the chosen theme — previously only the accent color was wired up, leaving all sidebar text permanently green
-const CACHE = 'lifedesk-v31';
+// LifeDesk Service Worker v32 — fixed camera icon getting pushed off-screen on narrow phones (mode-indicator label wasn't allowed to shrink), fixed Quick Actions/Profile/Sign Out buttons still showing hardcoded green (--ld-border was never wired to the theme)
+const CACHE = 'lifedesk-v32';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
