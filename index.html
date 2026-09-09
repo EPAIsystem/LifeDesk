@@ -2867,6 +2867,7 @@ function buildSysPrompt(d){
   if(d.name.indexOf('Kids')>=0)base+='\n\nKIDS DESK - SAFE MODE:\n- Simple, age-appropriate language for children aged 4-12.\n- Use emojis. Encouraging and fun.\n- Never include anything scary, violent, or inappropriate.\n- Use African/Ghanaian examples children can relate to.\n- End with an encouraging note or fun challenge.';
   var langInstr = getLangPrompt();
   if(langInstr) base += '\n\nLANGUAGE:\n- ' + langInstr + '\n- This applies to your ENTIRE response, not just a greeting.';
+  base += '\n\nDOWNLOADABLE FORMATS:\n- You cannot generate actual files yourself. If someone asks for this answer as a Word document, Excel spreadsheet, or image, do NOT just decline — answer their actual question normally, then briefly mention that Word, Excel, and Image download buttons are available right on this answer screen once your response is ready, so they can export it in one tap.';
   if(SERVICE_INTRO_PENDING && CURRENT_SERVICE) {
     base += '\n\nSERVICE INTRODUCTION MODE (this turn only):\n' +
       '- The user just tapped "' + CURRENT_SERVICE.name + '" — role: ' + CURRENT_SERVICE.prompt + '\n' +
@@ -2950,6 +2951,8 @@ function sendFollowUp(){
       '<div class="act-row">'+
         '<div class="act-pill" onclick="shareFollowUpAnswer(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">🔗 Share</div>'+
         '<div class="act-pill" onclick="exportFollowUpAsWord(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📄 Word</div>'+
+        '<div class="act-pill" onclick="exportFollowUpAsExcel(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📊 Excel</div>'+
+        '<div class="act-pill" onclick="exportAnswerAsImage(\''+fuId+'\')" style="cursor:pointer;">🖼️ Image</div>'+
         '<div class="act-pill" onclick="markHelpful(this)" data-q="'+encodeURIComponent(txt)+'" style="cursor:pointer;">👍 Helpful</div>'+
         '<div class="act-pill" onclick="focusFollowUp()" style="cursor:pointer;">🔄 Follow-up</div>'+
       '</div>';
@@ -2987,6 +2990,8 @@ function renderAnswer(txt,d,used){
       '<button class="fav-btn" id="fav-btn-main" onclick="toggleFavourite()" title="Save to Favourites">⭐</button>'+
       '<div class="act-pill" id="act-share-btn" onclick="shareAnswer()" style="cursor:pointer;">🔗 Share</div>'+
       '<div class="act-pill" onclick="exportAnswerAsWord(LAST_ANS.q, LAST_ANS.a)" style="cursor:pointer;">📄 Word</div>'+
+      '<div class="act-pill" onclick="exportAnswerAsExcel(LAST_ANS.q, LAST_ANS.a)" style="cursor:pointer;">📊 Excel</div>'+
+      '<div class="act-pill" onclick="exportAnswerAsImage(\'ans-body\')" style="cursor:pointer;">🖼️ Image</div>'+
       '<div class="act-pill" id="act-helpful-btn" onclick="markHelpful(this)" style="cursor:pointer;">👍 Helpful</div><div class="act-pill" onclick="focusFollowUp()" style="cursor:pointer;">🔄 Follow-up</div>'+
     '</div>';
   g('ans-body').scrollTop=0;
@@ -3953,10 +3958,90 @@ function replayHistory(q, a, v) {
 }
 
 // ── FAVOURITES ───────────────────────────────────────────
+function exportAnswerAsExcel(q, a) {
+  if(!q) { showToast('Nothing to export yet'); return; }
+  function buildAndDownload() {
+    var rows = parseMarkdownTableToRows(a);
+    var wb = window.XLSX.utils.book_new();
+    var ws;
+    if(rows && rows.length) {
+      // Put the question above the parsed table
+      var sheetData = [[q], []].concat(rows);
+      ws = window.XLSX.utils.aoa_to_sheet(sheetData);
+    } else {
+      // No table found — fall back to a readable one-row-per-paragraph layout
+      var paragraphs = a.split(/\n+/).filter(function(p){ return p.trim(); });
+      var sheetData = [['Question', q], [], ['Answer']];
+      paragraphs.forEach(function(p){ sheetData.push([p]); });
+      ws = window.XLSX.utils.aoa_to_sheet(sheetData);
+    }
+    ws['!cols'] = [{ wch: 60 }];
+    window.XLSX.utils.book_append_sheet(wb, ws, 'LifeDesk Answer');
+    window.XLSX.writeFile(wb, 'LifeDesk-Answer-' + Date.now() + '.xlsx');
+    showToast('📊 Saved as Excel file');
+  }
+  if(window.XLSX) { buildAndDownload(); return; }
+  showToast('Preparing Excel file...');
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload = buildAndDownload;
+  s.onerror = function(){ showToast('Could not prepare Excel file. Try again.'); };
+  document.head.appendChild(s);
+}
+
+// Parses a markdown-style table ( | a | b | \n |---|---| \n | 1 | 2 | ) into
+// a 2D array of rows. Returns null if the answer doesn't contain one.
+function parseMarkdownTableToRows(text) {
+  var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.startsWith('|'); });
+  if(lines.length < 2) return null;
+  var rows = [];
+  lines.forEach(function(line){
+    // Skip the markdown separator row (e.g. |---|---|)
+    if(/^\|[\s\-:|]+\|$/.test(line)) return;
+    var cells = line.split('|').slice(1, -1).map(function(c){ return c.trim(); });
+    if(cells.length) rows.push(cells);
+  });
+  return rows.length ? rows : null;
+}
+
+function exportFollowUpAsExcel(el) {
+  var q = decodeURIComponent(el.getAttribute('data-q') || '');
+  var a = decodeURIComponent(el.getAttribute('data-a') || '');
+  exportAnswerAsExcel(q, a);
+}
+
 function exportFollowUpAsWord(el) {
   var q = decodeURIComponent(el.getAttribute('data-q') || '');
   var a = decodeURIComponent(el.getAttribute('data-a') || '');
   exportAnswerAsWord(q, a);
+}
+
+function exportAnswerAsImage(targetId) {
+  var el = document.getElementById(targetId || 'ans-body');
+  if(!el) { showToast('Nothing to export yet'); return; }
+  function captureAndDownload() {
+    window.html2canvas(el, { backgroundColor: '#ffffff', scale: 2 }).then(function(canvas) {
+      canvas.toBlob(function(blob) {
+        if(!blob) { showToast('Could not create image. Try again.'); return; }
+        var url = URL.createObjectURL(blob);
+        var a_tag = document.createElement('a');
+        a_tag.href = url;
+        a_tag.download = 'LifeDesk-Answer-' + Date.now() + '.jpg';
+        document.body.appendChild(a_tag);
+        a_tag.click();
+        document.body.removeChild(a_tag);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
+        showToast('🖼️ Saved as image');
+      }, 'image/jpeg', 0.92);
+    }).catch(function(){ showToast('Could not create image. Try again.'); });
+  }
+  if(window.html2canvas) { captureAndDownload(); return; }
+  showToast('Preparing image...');
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload = captureAndDownload;
+  s.onerror = function(){ showToast('Could not prepare image. Try again.'); };
+  document.head.appendChild(s);
 }
 
 function exportAnswerAsWord(q, a) {
@@ -6441,6 +6526,8 @@ sendFollowUp = function() {
       '<div class="act-row">'+
         '<div class="act-pill" onclick="shareFollowUpAnswer(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">🔗 Share</div>'+
         '<div class="act-pill" onclick="exportFollowUpAsWord(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📄 Word</div>'+
+        '<div class="act-pill" onclick="exportFollowUpAsExcel(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📊 Excel</div>'+
+        '<div class="act-pill" onclick="exportAnswerAsImage(\''+fuId+'\')" style="cursor:pointer;">🖼️ Image</div>'+
         '<div class="act-pill" onclick="markHelpful(this)" data-q="'+encodeURIComponent(txt)+'" style="cursor:pointer;">👍 Helpful</div>'+
         '<div class="act-pill" onclick="focusFollowUp()" style="cursor:pointer;">🔄 Follow-up</div>'+
       '</div>';
