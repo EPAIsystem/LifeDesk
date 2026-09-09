@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v28 — sign-in/landing screen banner ("LifeDesk — Your AI advisor for everyday life") now follows the chosen theme instead of a fixed hardcoded green gradient
-const CACHE = 'lifedesk-v28';
+// LifeDesk Service Worker v31 — desktop sidebar/right-panel text colors (--ld-text, --ld-muted, --ld-dim) now actually follow the chosen theme — previously only the accent color was wired up, leaving all sidebar text permanently green
+const CACHE = 'lifedesk-v31';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
