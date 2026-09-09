@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v34 — fixed the color-picker Done/Save button (and Send button) flashing a hardcoded green on tap before release; backgrounds now use luminance-adaptive mixing so contrast stays balanced across all 6 themes instead of one fixed formula for every color
-const CACHE = 'lifedesk-v34';
+// LifeDesk Service Worker v35 — added Excel export (parses real tables from the answer when present) and Image export, alongside Word, on every answer and follow-up; AI now points to these buttons instead of just declining when asked for a downloadable format
+const CACHE = 'lifedesk-v35';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
