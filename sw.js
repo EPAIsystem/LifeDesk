@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v32 — fixed camera icon getting pushed off-screen on narrow phones (mode-indicator label wasn't allowed to shrink), fixed Quick Actions/Profile/Sign Out buttons still showing hardcoded green (--ld-border was never wired to the theme)
-const CACHE = 'lifedesk-v32';
+// LifeDesk Service Worker v34 — fixed the color-picker Done/Save button (and Send button) flashing a hardcoded green on tap before release; backgrounds now use luminance-adaptive mixing so contrast stays balanced across all 6 themes instead of one fixed formula for every color
+const CACHE = 'lifedesk-v34';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
