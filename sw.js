@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v36 — tapped terms (like "quadratics") that aren't in the curated Study Hub now get explained directly by the AI instead of dropping into an unrelated generic screen with hardcoded questions; Home/Forward floating buttons moved from the header area (where they overlapped each screen's own back arrow) to just above the bottom nav
-const CACHE = 'lifedesk-v36';
+// LifeDesk Service Worker v37 — the "Unexpected token '<'" crash on complex multi-turn tasks (like a full business plan) was Netlify's default 10-second function timeout returning an HTML error page instead of JSON; requested the max 26s timeout for ask.js, and added graceful error handling everywhere so a timeout now shows a clear message instead of crashing. Also expanded topic-term highlighting from 8 to 14 verticals.
+const CACHE = 'lifedesk-v37';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
