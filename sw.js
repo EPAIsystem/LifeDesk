@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v35 — added Excel export (parses real tables from the answer when present) and Image export, alongside Word, on every answer and follow-up; AI now points to these buttons instead of just declining when asked for a downloadable format
-const CACHE = 'lifedesk-v35';
+// LifeDesk Service Worker v36 — tapped terms (like "quadratics") that aren't in the curated Study Hub now get explained directly by the AI instead of dropping into an unrelated generic screen with hardcoded questions; Home/Forward floating buttons moved from the header area (where they overlapped each screen's own back arrow) to just above the bottom nav
+const CACHE = 'lifedesk-v36';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
