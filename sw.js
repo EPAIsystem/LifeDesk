@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v38 — CRITICAL FIX: conversation history (CH) was never trimmed, so every follow-up resent the ENTIRE conversation from the start of the session, including huge prior answers. This is what actually caused repeated timeouts on even trivial one-line follow-ups later in a session — not response complexity, but an ever-growing request payload. Now capped to the last 16 messages per request.
-const CACHE = 'lifedesk-v38';
+// LifeDesk Service Worker v39 — real root cause found: verticals with live search enabled (Business, etc.) were triggering a fresh web-search tool-use round-trip on EVERY follow-up, including one-word continuations like "Piece 2" — that multi-step search loop, not conversation size, is what was actually timing out. Continuation-style replies now skip the search tool entirely, plus added explicit AI guidance against redundant re-searching mid-document.
+const CACHE = 'lifedesk-v39';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
