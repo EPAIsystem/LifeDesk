@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v37 — the "Unexpected token '<'" crash on complex multi-turn tasks (like a full business plan) was Netlify's default 10-second function timeout returning an HTML error page instead of JSON; requested the max 26s timeout for ask.js, and added graceful error handling everywhere so a timeout now shows a clear message instead of crashing. Also expanded topic-term highlighting from 8 to 14 verticals.
-const CACHE = 'lifedesk-v37';
+// LifeDesk Service Worker v38 — CRITICAL FIX: conversation history (CH) was never trimmed, so every follow-up resent the ENTIRE conversation from the start of the session, including huge prior answers. This is what actually caused repeated timeouts on even trivial one-line follow-ups later in a session — not response complexity, but an ever-growing request payload. Now capped to the last 16 messages per request.
+const CACHE = 'lifedesk-v38';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
