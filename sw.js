@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v39 — real root cause found: verticals with live search enabled (Business, etc.) were triggering a fresh web-search tool-use round-trip on EVERY follow-up, including one-word continuations like "Piece 2" — that multi-step search loop, not conversation size, is what was actually timing out. Continuation-style replies now skip the search tool entirely, plus added explicit AI guidance against redundant re-searching mid-document.
-const CACHE = 'lifedesk-v39';
+// LifeDesk Service Worker v40 — responses that hit the length limit mid-sentence (like the business plan cutting off at "...G") now show a clear notice telling the user to say "continue" instead of silently stopping; AI now proactively paces long deliverables into complete numbered pieces from the start rather than writing until it gets cut off; max_tokens raised moderately (1000→1800)
+const CACHE = 'lifedesk-v40';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
