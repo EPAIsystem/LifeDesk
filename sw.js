@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v41 — MAJOR CHANGE: migrated ask function from buffered responses to real token-by-token streaming (ask.js → ask.mjs, modern Netlify Functions API). Answers now appear progressively as they're generated instead of a blank wait, execution limit raised to 60s (was 26s), and there's no longer a single "everything or nothing" moment that can time out and lose the whole response. All 7 call sites (text questions, follow-ups, photo Q&A, farm planner, follow-up suggestions, content moderation) updated to match.
-const CACHE = 'lifedesk-v41';
+// LifeDesk Service Worker v42 — leaving and returning to a multi-part document (like a 6-part business plan) now restores the FULL thread, not just the first part; session also saved to Firestore for ~7-day cross-device recovery; added one-tap Copy button on every answer/follow-up; fake decorative status bar now hidden on installed apps (real device status bar already shows there)
+const CACHE = 'lifedesk-v42';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
