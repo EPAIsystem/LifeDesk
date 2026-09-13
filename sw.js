@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v40 — responses that hit the length limit mid-sentence (like the business plan cutting off at "...G") now show a clear notice telling the user to say "continue" instead of silently stopping; AI now proactively paces long deliverables into complete numbered pieces from the start rather than writing until it gets cut off; max_tokens raised moderately (1000→1800)
-const CACHE = 'lifedesk-v40';
+// LifeDesk Service Worker v41 — MAJOR CHANGE: migrated ask function from buffered responses to real token-by-token streaming (ask.js → ask.mjs, modern Netlify Functions API). Answers now appear progressively as they're generated instead of a blank wait, execution limit raised to 60s (was 26s), and there's no longer a single "everything or nothing" moment that can time out and lose the whole response. All 7 call sites (text questions, follow-ups, photo Q&A, farm planner, follow-up suggestions, content moderation) updated to match.
+const CACHE = 'lifedesk-v41';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
