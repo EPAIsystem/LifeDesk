@@ -1266,7 +1266,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div class="fg" id="ob-country-txt-wrap" style="display:none;"><label class="fl">Country Name</label>
       <input class="fi" id="ob-country-txt" placeholder="Type your country">
     </div>
-    <button class="btn btn-primary" onclick="obGoTo(1)">Continue →</button>
+    <button class="btn btn-primary" onclick="obGoTo(2)">Continue →</button>
   </div>
 
   <!-- Step 1: Plan -->
@@ -1305,9 +1305,9 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
       <div class="ic" onclick="toggleIC(this,'health')"><span class="ic-icon">🩺</span><div><div class="ic-lbl">Health</div><div class="ic-price">included</div></div></div>
       <div class="ic" onclick="toggleIC(this,'jobs')"><span class="ic-icon">💼</span><div><div class="ic-lbl">Jobs & Career</div><div class="ic-price">included</div></div></div>
       <div class="ic" onclick="toggleIC(this,'home')"><span class="ic-icon">🏡</span><div><div class="ic-lbl">Home & Family</div><div class="ic-price">included</div></div></div>
-      <div class="ic" onclick="toggleIC(this,'religion')"><span class="ic-icon">✝️</span><div><div class="ic-lbl">Religion</div><div class="ic-price">+$1.99/mo</div></div></div>
+      <div class="ic" onclick="toggleIC(this,'religion')"><span class="ic-icon">✝️</span><div><div class="ic-lbl">Religion</div><div class="ic-price">Premium topic</div></div></div>
       <div class="ic" onclick="toggleIC(this,'tourism')"><span class="ic-icon">🗺️</span><div><div class="ic-lbl">Tourism</div><div class="ic-price">included</div></div></div>
-      <div class="ic prem" onclick="toggleIC(this,'luxury')"><span class="ic-icon">💎</span><div><div class="ic-lbl">Luxury Goods</div><div class="ic-price">+$1.99/mo</div></div></div>
+      <div class="ic prem" onclick="toggleIC(this,'luxury')"><span class="ic-icon">💎</span><div><div class="ic-lbl">Luxury Goods</div><div class="ic-price">Premium topic</div></div></div>
       <div class="ic" onclick="toggleIC(this,'finance')"><span class="ic-icon">💰</span><div><div class="ic-lbl">Finance</div><div class="ic-price">included</div></div></div>
       <div class="ic" onclick="toggleIC(this,'fashion')"><span class="ic-icon">👗</span><div><div class="ic-lbl">Fashion</div><div class="ic-price">included</div></div></div>
       <div class="ic" onclick="toggleIC(this,'tech')"><span class="ic-icon">💻</span><div><div class="ic-lbl">Tech & Digital</div><div class="ic-price">included</div></div></div>
@@ -1315,7 +1315,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
       <div class="ic" onclick="toggleIC(this,'food')"><span class="ic-icon">🍲</span><div><div class="ic-lbl">Food & Cooking</div><div class="ic-price">included</div></div></div>
       <div class="ic" onclick="toggleIC(this,'auto')"><span class="ic-icon">🚗</span><div><div class="ic-lbl">Automotive</div><div class="ic-price">included</div></div></div>
       <div class="ic" onclick="toggleIC(this,'arts')"><span class="ic-icon">🎭</span><div><div class="ic-lbl">Arts & Culture</div><div class="ic-price">included</div></div></div>
-      <div class="ic prem" onclick="toggleIC(this,'exotic')"><span class="ic-icon">🌐</span><div><div class="ic-lbl">Exotic & Import</div><div class="ic-price">+$1.99/mo</div></div></div>
+      <div class="ic prem" onclick="toggleIC(this,'exotic')"><span class="ic-icon">🌐</span><div><div class="ic-lbl">Exotic & Import</div><div class="ic-price">Premium topic</div></div></div>
     </div>
     <button class="btn btn-primary" onclick="obGoTo(3)">Continue →</button>
   </div>
@@ -1643,12 +1643,12 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
       <div class="prof-name" id="prof-name">Emmanuel M.</div>
       <div class="prof-loc" id="prof-loc">📍 Peki · Ghana</div>
       <div class="prof-email" id="prof-email">user@email.com</div>
-      <span class="prof-tag gold" id="prof-plan">Free Trial · 30 days</span>
+      <span class="prof-tag gold" id="prof-plan">Free Plan</span>
     </div>
   </div>
   <div class="stats-row">
     <div class="stat-card"><div class="stat-n" id="stat-questions">0</div><div class="stat-l">Questions</div></div>
-    <div class="stat-card"><div class="stat-n" id="stat-days">30</div><div class="stat-l">Days Left</div></div>
+    <div class="stat-card"><div class="stat-n" id="stat-days">10</div><div class="stat-l">Free Today</div></div>
     <div class="stat-card"><div class="stat-n">1</div><div class="stat-l">Streak</div></div>
   </div>
   <div id="admin-panel-link" style="display:none;padding:0 16px 4px;">
@@ -1667,7 +1667,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
       <div class="bill-item"><span class="bill-ico">🧒</span><span class="bill-nm">Kids Desk</span><span class="bill-pr" style="color:#1E6B45;">Free ✓</span></div>
     </div>
     <div class="tbar-wrap">
-      <div class="tbar-lbl"><span>Free Trial</span><span style="color:#A0720A;font-weight:700;" id="trial-lbl">30 days remain</span></div>
+      <div class="tbar-lbl"><span>Free Plan</span><span style="color:#A0720A;font-weight:700;" id="trial-lbl">10 left today</span></div>
       <div class="tbar"><div class="tbar-fill" id="trial-fill"></div></div>
     </div>
     <button class="btn btn-primary" style="margin-bottom:8px;" onclick="showScreen('s-plans')">Upgrade Now</button>
@@ -2640,7 +2640,7 @@ function finishOnboarding(){
   var ci=isOther?(g('ob-city-txt').value.trim()||'Not specified'):g('ob-city').value;
   var dn=g('ob-denom')?g('ob-denom').value:'',of=g('ob-other-faith')?g('ob-other-faith').value.trim():'';
   var prof={uid:CU.uid,name:CU.displayName||'User',email:CU.email,country:co,region:r,city:ci,
-    locality:ci+' \u00b7 '+r+' \u00b7 '+co,plan:SP,isPaid:false,verticals:SV,faithApproach:SF,denomination:dn,otherFaith:of,
+    locality:ci+' \u00b7 '+r+' \u00b7 '+co,plan:'free',isPaid:false,verticals:SV,faithApproach:SF,denomination:dn,otherFaith:of,
     trialStart:firebase.firestore.FieldValue.serverTimestamp(),questionsAsked:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   db.collection('users').doc(CU.uid).set(prof)
     .then(function(){UP=prof;applyProfile(prof);showToast('Welcome to LifeDesk!');showScreen('s-home');})
@@ -2682,13 +2682,16 @@ function applyProfile(p){
   g('bill-plan-name').textContent=(pn[p.plan]||'Standard')+' Plan';
   g('bill-plan-price').textContent=pr;g('bill-total').textContent=pr;
   g('stat-questions').textContent=p.questionsAsked||0;
-  if(!p.isPaid && p.trialStart&&p.trialStart.seconds){
-    var el2=Math.floor((Date.now()/1000-p.trialStart.seconds)/86400),rem=Math.max(0,30-el2);
-    g('stat-days').textContent=rem;g('trial-lbl').textContent=rem+' days remain';
-    g('trial-fill').style.width=(rem/30*100)+'%';
-    var planLabels0 = {core:'Core',standard:'Standard',premium:'Premium'};
-    var previewName = planLabels0[p.plan] || 'Free';
-    g('prof-plan').textContent=rem>0?(previewName+' Trial \u00b7 '+rem+' days left'):'Trial Ended \u2014 Upgrade to Continue';
+  if(!p.isPaid && !p.adminRole){
+    g('prof-plan').textContent = 'Free Plan';
+    var today = new Date().toISOString().slice(0,10);
+    var usedToday = (p.dailyCountDate === today) ? (p.dailyCount||0) : 0;
+    var accountAgeDays = (p.trialStart && p.trialStart.seconds) ? Math.floor((Date.now()/1000 - p.trialStart.seconds)/86400) : 999;
+    var dailyLimit = accountAgeDays < 30 ? 10 : 5;
+    var remainingToday = Math.max(0, dailyLimit - usedToday);
+    g('stat-days').textContent = remainingToday;
+    g('trial-lbl').textContent = remainingToday + ' left today';
+    g('trial-fill').style.width = (remainingToday/dailyLimit*100)+'%';
   } else if(p.isPaid && p.plan) {
     var planLabels = {starter:'Starter',standard:'Standard',premium:'Premium','premium-pro':'Premium Pro','family-starter':'Family Starter','family-standard':'Family Standard','family-premium':'Family Premium','family-premium-pro':'Family Premium Pro','workplace-standard':'Workplace Standard','workplace-premium':'Workplace Premium','workplace-premium-pro':'Workplace Premium Pro'};
     g('prof-plan').textContent = (planLabels[p.plan] || p.plan) + ' Plan';
@@ -2986,6 +2989,23 @@ function buildSysPrompt(d){
 // If Claude hit the length limit mid-response, stop_reason is 'max_tokens' —
 // the text just silently ends, often mid-sentence or mid-table. Make that
 // visible instead of leaving the user confused about what happened.
+// Shared card shown whenever the daily free-question limit is hit —
+// wherever this fires (a question, a follow-up, a photo, the Farm Calendar
+// planner), it should always give a direct, tappable way to Plans, not just
+// an error message with nowhere to go.
+function buildLimitReachedCardHTML(err) {
+  var titleText = err.type === 'trial_expired' ? 'Free Trial Ended' : 'Daily Limit Reached';
+  return '<div style="padding:24px;text-align:center;">'+
+    '<div style="font-size:32px;margin-bottom:12px;">\u26a0\ufe0f</div>'+
+    '<div style="font-size:15px;font-weight:700;color:#1C1917;margin-bottom:8px;">'+titleText+'</div>'+
+    '<div style="font-size:13px;color:#6B7280;line-height:1.7;margin-bottom:16px;">'+err.message+'</div>'+
+    '<button onclick="showScreen(\'s-plans\')" style="background:#4F46E5;color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">Upgrade Plan</button>'+
+    '</div>';
+}
+function isLimitError(err) {
+  return err.type==='daily_limit_reached'||err.type==='deep_limit_reached'||err.type==='trial_expired';
+}
+
 function appendTruncationNotice(text, stopReason) {
   if(stopReason !== 'max_tokens') return text;
   return text + '\n\n---\n⚠️ *This response was cut off because it ran long. Tap 🔄 Follow-up and say "continue" to get the rest.*';
@@ -3131,13 +3151,11 @@ function sendQuestion(){
       saveHistory(txt,t2,CV);loadHistory();persistSession();
     },
     function onError(err){
-      if(err.type==='daily_limit_reached'||err.type==='trial_expired'){
+      if(isLimitError(err)){
         hideLoading();
         showToast(err.message);
-        var isTrialExpired = err.type === 'trial_expired';
-        var titleText = isTrialExpired ? 'Free Trial Ended' : 'Daily Limit Reached';
         if(g('ans-body')){
-          g('ans-body').innerHTML='<div style="padding:24px;text-align:center;">'+'<div style="font-size:32px;margin-bottom:12px;">\u26a0\ufe0f</div>'+'<div style="font-size:15px;font-weight:700;color:#1C1917;margin-bottom:8px;">'+titleText+'</div>'+'<div style="font-size:13px;color:#6B7280;line-height:1.7;margin-bottom:16px;">'+err.message+'</div>'+'<button onclick="showScreen(\'s-plans\')" style="background:#4F46E5;color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">Upgrade Plan</button>'+'</div>';
+          g('ans-body').innerHTML = buildLimitReachedCardHTML(err);
           showScreen('s-answer');
         }
         return;
@@ -3200,7 +3218,9 @@ function sendFollowUp(){
     },
     function onError(err){
       var fuBub=g(fuId);
-      if(fuBub) fuBub.innerHTML='<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+err.message+'</div></div>';
+      if(!fuBub) return;
+      if(isLimitError(err)) { fuBub.innerHTML = buildLimitReachedCardHTML(err); return; }
+      fuBub.innerHTML='<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+err.message+'</div></div>';
     }
   );
 }
@@ -5155,7 +5175,9 @@ function sendFarmPlan(){
     },
     function onError(err){
       var bub = g('farmcal-ans');
-      if(bub) bub.innerHTML = '<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+err.message+'</div></div>';
+      if(!bub) return;
+      if(isLimitError(err)) { bub.innerHTML = buildLimitReachedCardHTML(err); return; }
+      bub.innerHTML = '<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+err.message+'</div></div>';
     }
   );
 }
@@ -6812,9 +6834,9 @@ sendQuestion = function() {
       clearImage();
     },
     function onError(err){
-      if(err.type==='daily_limit_reached'||err.type==='deep_limit_reached'||err.type==='trial_expired'){
+      if(isLimitError(err)){
         showToast(err.message);
-        if(err.type==='trial_expired') showScreen('s-plans');
+        if(g('ans-body')) { g('ans-body').innerHTML = buildLimitReachedCardHTML(err); showScreen('s-answer'); }
         return;
       }
       renderError('Could not get answer: ' + err.message);
@@ -6875,9 +6897,10 @@ sendFollowUp = function() {
       clearImageFollowup();
     },
     function onError(err){
-      if(err.type==='trial_expired') { showToast(err.message); showScreen('s-plans'); return; }
       var fb=g(fuId);
-      if(fb) fb.innerHTML='<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+err.message+'</div></div>';
+      if(!fb) return;
+      if(isLimitError(err)) { fb.innerHTML = buildLimitReachedCardHTML(err); return; }
+      fb.innerHTML='<div class="err-card"><div class="err-title">⚠ Error</div><div class="err-msg">'+err.message+'</div></div>';
     }
   );
 };
