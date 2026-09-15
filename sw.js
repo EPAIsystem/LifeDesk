@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v42 — leaving and returning to a multi-part document (like a 6-part business plan) now restores the FULL thread, not just the first part; session also saved to Firestore for ~7-day cross-device recovery; added one-tap Copy button on every answer/follow-up; fake decorative status bar now hidden on installed apps (real device status bar already shows there)
-const CACHE = 'lifedesk-v42';
+// LifeDesk Service Worker v44 — the "Upgrade Plan" button on the daily-limit message now appears everywhere this can happen, not just the main question flow — follow-ups, photo questions, photo follow-ups, and the Farm Calendar planner all previously showed a dead-end message with no way to reach Plans
+const CACHE = 'lifedesk-v44';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
