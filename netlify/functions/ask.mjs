@@ -63,38 +63,58 @@ export default async (req) => {
   const vertical = body.vertical || "";
   const userId = body.userId || null;
 
-  // ── TRIAL / PLAN ENFORCEMENT ─────────────────────────────
-  // Same check as before: a free-plan user whose 30-day trial has passed is
-  // blocked and told to upgrade. Admins/whitelisted users (adminRole) and
-  // anyone with isPaid:true are exempt. This does NOT implement full
-  // per-plan daily question limits — those numbers were never defined
-  // anywhere and inventing them here would be a business decision, not a
-  // bug fix.
+  // ── DAILY FREE-TIER LIMIT ────────────────────────────────
+  // Replaces the old "30-day trial then blocked forever" model. Signups
+  // showing a pricing screen before any value was demonstrated was causing
+  // real signup abandonment (people saw plan cards and didn't even try to
+  // log in). The new model: free forever, but paced — a daily question
+  // count that resets each day, generous for a new account's first month
+  // (10/day) to build trust and habit, then settles to a sustainable rate
+  // (5/day). Paid and admin/whitelisted accounts are unlimited.
+  const FIRST_MONTH_DAILY_LIMIT = 10;
+  const STANDARD_DAILY_LIMIT = 5;
+  const FIRST_MONTH_DAYS = 30;
+
   if (userId && admin.apps.length) {
     try {
       const db = admin.firestore();
-      const userSnap = await db.collection("users").doc(userId).get();
+      const userRef = db.collection("users").doc(userId);
+      const userSnap = await userRef.get();
       if (userSnap.exists) {
         const u = userSnap.data();
-        if (!u.isPaid && !u.adminRole && u.trialStart && u.trialStart.seconds) {
-          const elapsedDays = Math.floor((Date.now() / 1000 - u.trialStart.seconds) / 86400);
-          if (elapsedDays >= 30) {
+        if (!u.isPaid && !u.adminRole) {
+          const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD" (UTC)
+          const alreadyToday = u.dailyCountDate === today;
+          const countSoFar = alreadyToday ? (u.dailyCount || 0) : 0;
+
+          const accountAgeDays = (u.trialStart && u.trialStart.seconds)
+            ? Math.floor((Date.now() / 1000 - u.trialStart.seconds) / 86400)
+            : FIRST_MONTH_DAYS; // unknown account age — treat conservatively as past the first month
+          const limit = accountAgeDays < FIRST_MONTH_DAYS ? FIRST_MONTH_DAILY_LIMIT : STANDARD_DAILY_LIMIT;
+
+          if (countSoFar >= limit) {
             return new Response(
               JSON.stringify({
                 error: {
-                  type: "trial_expired",
-                  message: "Your 30-day free trial has ended. Upgrade to a paid plan to keep asking questions.",
+                  type: "daily_limit_reached",
+                  message: "You've used today's " + limit + " free questions. Come back tomorrow for more — or upgrade any time for unlimited access.",
                 },
               }),
               { status: 403, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
             );
           }
+
+          // Count this request now (not after success) so retries/failures
+          // still count against the limit, same as a real usage cap should.
+          userRef.update({ dailyCount: countSoFar + 1, dailyCountDate: today }).catch((e) => {
+            console.error("ask.mjs: failed to update daily count:", e.message);
+          });
         }
       }
     } catch (e) {
       // Transient Firestore hiccup — don't block a legitimate question over
       // our own error; log it and let the request proceed.
-      console.error("ask.mjs: trial check failed, allowing request:", e.message);
+      console.error("ask.mjs: daily limit check failed, allowing request:", e.message);
     }
   }
 
