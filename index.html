@@ -1501,6 +1501,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
   <div class="vg">
     <div class="vc kv" onclick="showScreen('s-kids')"><span class="vc-icon">🧒</span><div class="vc-badge vbn">Safe</div><div class="vc-name">Kids Desk</div><div class="vc-desc">Ages 4–12</div></div>
     <div class="vc yv" onclick="openVertical('youth')"><span class="vc-icon">🎓</span><div class="vc-badge vbn">New</div><div class="vc-name">Youth Zone</div><div class="vc-desc">Ages 13–25</div></div>
+    <div class="vc" onclick="openVertical('relationships')"><span class="vc-icon">💍</span><div class="vc-badge vbn">New</div><div class="vc-name">Relationships & Marriage</div><div class="vc-desc">Courtship, marriage</div></div>
   </div>
 </div><div style="height:20px;"></div></div>
 <div class="bnav">
@@ -1898,14 +1899,27 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
   <div class="comm-ask-form" id="comm-ask-form">
     <div style="font-size:13px;font-weight:800;color:#1C1917;margin-bottom:10px;">Ask the Community</div>
     <select class="comm-vertical-select" id="comm-vertical-sel">
-      <option value="general">&#127760; General (all verticals)</option>
-      <option value="farming">&#127807; Farming</option>
-      <option value="religion">&#9997;&#65039; Religion &amp; Faith</option>
-      <option value="health">&#127978; Health</option>
-      <option value="education">&#127979; Education</option>
-      <option value="business">&#128200; Business</option>
-      <option value="finance">&#128176; Finance</option>
-      <option value="legal">&#9878;&#65039; Legal</option>
+      <option value="general">🌐 General (all verticals)</option>
+      <option value="farming">🌾 Farming</option>
+      <option value="religion">✝️ Religion & Faith</option>
+      <option value="health">🩺 Health</option>
+      <option value="education">📚 Education</option>
+      <option value="business">📈 Business</option>
+      <option value="finance">💰 Finance</option>
+      <option value="legal">⚖️ Legal</option>
+      <option value="food">🍲 Food & Cooking</option>
+      <option value="tech">💻 Tech</option>
+      <option value="home">🏡 Home & Family</option>
+      <option value="construction">🏗️ Building & Construction</option>
+      <option value="auto">🚗 Automotive</option>
+      <option value="jobs">💼 Jobs & Career</option>
+      <option value="tourism">🗺️ Tourism & Travel</option>
+      <option value="fashion">👗 Fashion</option>
+      <option value="arts">🎭 Arts & Culture</option>
+      <option value="youth">🎓 Youth Zone</option>
+      <option value="luxury">💎 Luxury Goods</option>
+      <option value="exotic">🌍 Exotic & Imported Goods</option>
+      <option value="relationships">💍 Relationships & Marriage</option>
     </select>
     <textarea class="prayer-inp" id="comm-q-text" rows="3" placeholder="Ask a question to the community..."></textarea>
     <div style="display:flex;gap:8px;margin-top:8px;">
@@ -2852,6 +2866,7 @@ function timeAgo(input){
 
 // VERTICALS DATA
 var VD={
+  general:{name:'LifeDesk',sub:'Ask me anything',icon:'🌿',bg:'#F0FDF4',lex:false,rpath:false,ns:true,qs:['What can LifeDesk help me with?','Tell me something useful for today','What\'s new I should know about?','Help me figure out what I need']},
   farming:{name:'Farming & Agriculture',sub:'Live prices · Seasonal',icon:'🌾',bg:'#D4EDDA',lex:false,rpath:false,ns:true,qs:['What crops maximize income this season near me?','Current cassava price at local market?','What pests to watch on cassava right now?','How to apply for PFJ subsidy this season?','Best fertilizer for maize in my region?']},
   religion:{name:'Religion & Faith',sub:'Bible-Based · SDA Featured',icon:'✝️',bg:'#EDE9FE',lex:false,rpath:true,ns:false,qs:['What does the Bible say about the Sabbath?','Explain the Sanctuary doctrine in Scripture','What are the 28 SDA fundamental beliefs?','Compare what denominations teach on baptism','Help me prepare a sermon on Daniel 7']},
   business:{name:'Business & Commerce',sub:'Local market · Live data',icon:'📈',bg:'#DBEAFE',lex:false,rpath:false,ns:true,qs:['Current wholesale prices for tomatoes?','How do I price goods for market day?','Write me a business plan for a chop bar','Where to source wholesale goods near me?','Tips to grow my customer base locally?']},
@@ -2871,6 +2886,7 @@ var VD={
   auto:{name:'Automotive',sub:'Ghana · Buying · Repairs',icon:'🚗',bg:'#F1F5F9',lex:true,rpath:false,ns:true,qs:['Current fuel prices in Ghana?','How to buy a reliable used car in Ghana?','Car repair shops near me?','How to import a car duty-free?','Common car scams to avoid in Accra?']},
   arts:{name:'Arts & Culture',sub:'Heritage · Creative work',icon:'🎭',bg:'#FCE7F3',lex:false,rpath:false,ns:false,qs:['History of Kente weaving in Ghana?','Upcoming cultural festivals in my region?','How to monetize traditional art online?','How to write and publish a local novel?','Film industry opportunities in Ghana?']},
   youth:{name:'Youth Zone',sub:'Ages 13-25 · Deep learning',icon:'🎓',bg:'#EDE9FE',lex:false,rpath:false,ns:true,qs:['Best tech career paths for Ghanaian youth?','How to start a business as a student?','University application tips for Ghana?','Latest remote work for youth?','Youth leadership programs in Ghana?']},
+  relationships:{name:'Relationships & Marriage',sub:'Courtship · Marriage · Family',icon:'💍',bg:'#FCE7F3',lex:false,rpath:false,ns:false,wholesome:true,qs:['How do I know if someone is right for marriage?','Tips for healthy communication in a relationship','How to prepare for marriage the right way','Red flags to watch for before marriage','Biblical principles for choosing a spouse']},
   'kids-ai':{name:'Kids Desk · AI & Coding',sub:'Safe Mode',icon:'🤖',bg:'#FFEDD5',lex:false,rpath:false,ns:false,qs:['What is a robot?','How does a computer think?','What is AI?','Can I make a game?','What is coding?']},
   'kids-science':{name:'Kids Desk · Science',sub:'Safe Mode',icon:'🔬',bg:'#DBEAFE',lex:false,rpath:false,ns:false,qs:['Why is the sky blue?','How do plants grow?','What is electricity?','Why do we need water?','How do birds fly?']},
   'kids-math':{name:'Kids Desk · Maths',sub:'Safe Mode',icon:'🔢',bg:'#D4EDDA',lex:false,rpath:false,ns:false,qs:['What is a prime number?','Help me understand fractions','What are even and odd numbers?','How do I multiply?','What is a shape?']},
@@ -2956,6 +2972,7 @@ function buildSysPrompt(d){
     base+='\n\n'+fr;
   }
   if(d.name.indexOf('Kids')>=0)base+='\n\nKIDS DESK - SAFE MODE:\n- Simple, age-appropriate language for children aged 4-12.\n- Use emojis. Encouraging and fun.\n- Never include anything scary, violent, or inappropriate.\n- Use African/Ghanaian examples children can relate to.\n- End with an encouraging note or fun challenge.';
+  if(d.wholesome)base+='\n\nRELATIONSHIPS & MARRIAGE - TONE AND BOUNDARIES:\n- This vertical is about building healthy, committed relationships and strong marriages — courtship, communication, compatibility, marriage preparation, conflict resolution, family life.\n- Keep guidance wholesome and constructive, oriented toward commitment and mutual respect, not casual dating or hookups.\n- Never provide explicit sexual content, describe sexual acts, or engage with requests seeking sexual content — redirect firmly but kindly toward the relationship/marriage guidance this vertical is actually for.\n- Where the user\'s faith approach is relevant, let it inform the advice naturally, same as elsewhere in the app.\n- Treat sensitive topics (breakups, abuse, infidelity) with care and empathy, and suggest professional counseling where appropriate.';
   var langInstr = getLangPrompt();
   if(langInstr) base += '\n\nLANGUAGE:\n- ' + langInstr + '\n- This applies to your ENTIRE response, not just a greeting.';
   base += '\n\nWEB SEARCH DISCIPLINE:\n- If you already gathered research earlier in this conversation, do NOT search again just to continue writing more of the same document — reuse what you already found.\n- Only search when the user asks something genuinely new that requires current information.\n- Searching multiple times in one response, or on every follow-up turn, causes real timeouts for the user. Be deliberate: search once if needed, then write.';
@@ -3524,6 +3541,12 @@ var TOPIC_MAPS = {
     {terms:['fuel consumption','fuel efficiency'],t:'fuelefficiency',l:'Fuel Efficiency',c:'gold'},
     {terms:['car maintenance','engine service'],t:'carmaintenance',l:'Car Maintenance',c:''},
     {terms:['buying a car','used car','car price'],t:'buyingcar',l:'Buying a Car',c:''}
+  ],
+  relationships:[
+    {terms:['courtship','dating'],t:'courtship',l:'Courtship',c:'gold'},
+    {terms:['marriage preparation','premarital'],t:'marriageprep',l:'Marriage Preparation',c:''},
+    {terms:['communication in marriage','healthy communication'],t:'relcommunication',l:'Communication',c:''},
+    {terms:['conflict resolution','resolving conflict'],t:'conflictresolution',l:'Conflict Resolution',c:''}
   ]
 };
 
@@ -6278,14 +6301,27 @@ function updatePlanBadge(planName) {
 // ── COMMUNITY QUESTIONS ──────────────────────────────────
 var COMM_FILTER = 'general';
 var COMM_VERTICALS = [
-  {code:'general', label:'All', icon:'🌐'},
-  {code:'farming',   label:'Farming',   icon:'🌾'},
-  {code:'religion',  label:'Faith',     icon:'✝️'},
-  {code:'health',    label:'Health',    icon:'🏥'},
-  {code:'education', label:'Education', icon:'🎓'},
-  {code:'business',  label:'Business',  icon:'📈'},
-  {code:'finance',   label:'Finance',   icon:'💰'},
-  {code:'legal',     label:'Legal',     icon:'⚖️'},
+  {code:'general',       label:'All',           icon:'🌐'},
+  {code:'farming',       label:'Farming',       icon:'🌾'},
+  {code:'religion',      label:'Faith',         icon:'✝️'},
+  {code:'health',        label:'Health',        icon:'🩺'},
+  {code:'education',     label:'Education',     icon:'📚'},
+  {code:'business',      label:'Business',      icon:'📈'},
+  {code:'finance',       label:'Finance',       icon:'💰'},
+  {code:'legal',         label:'Legal',         icon:'⚖️'},
+  {code:'food',          label:'Food',          icon:'🍲'},
+  {code:'tech',          label:'Tech',          icon:'💻'},
+  {code:'home',          label:'Home',          icon:'🏡'},
+  {code:'construction',  label:'Construction',  icon:'🏗️'},
+  {code:'auto',          label:'Auto',          icon:'🚗'},
+  {code:'jobs',          label:'Jobs',          icon:'💼'},
+  {code:'tourism',       label:'Tourism',       icon:'🗺️'},
+  {code:'fashion',       label:'Fashion',       icon:'👗'},
+  {code:'arts',          label:'Arts',          icon:'🎭'},
+  {code:'youth',         label:'Youth',         icon:'🎓'},
+  {code:'luxury',        label:'Luxury',        icon:'💎'},
+  {code:'exotic',        label:'Exotic',        icon:'🌍'},
+  {code:'relationships', label:'Relationships', icon:'💍'},
 ];
 
 function renderCommFilters() {
@@ -6412,7 +6448,7 @@ function loadCommunityQuestions() {
               +'&#9650; '+(d.votes||0)+'</div>'
             +'<div style="flex:1;"></div>'
             +'<div style="font-size:11px;color:#9CA3AF;cursor:pointer;" '
-              +'onclick="askFromCommunity(\''+escHTML(d.question).replace(/'/g,"&#39;")+'\')">'
+              +'onclick="askFromCommunity(\''+escHTML(d.question).replace(/'/g,"&#39;")+'\',\''+(d.vertical||'general')+'\')">'
               +'Ask AI &#8594;</div>'
           +'</div>'
           +'</div>';
@@ -6445,8 +6481,18 @@ function voteQuestion(id, alreadyVoted) {
   }
 }
 
-function askFromCommunity(q) {
-  // Take community question into AI answer flow
+function askFromCommunity(q, vertical) {
+  // Route to the vertical the question was actually posted under — previously
+  // this always used whatever vertical happened to already be active in the
+  // app (defaulting to Farming at startup), so a question about anything
+  // else could get answered as if it were a farming question.
+  if(vertical && vertical !== 'general' && VD[vertical]) {
+    CV = vertical;
+  } else {
+    // A genuinely general/uncategorised question — don't force a specific
+    // vertical's expertise framing onto it; let the AI answer broadly.
+    CV = 'general';
+  }
   document.getElementById('ask-input').value = q;
   showScreen('s-ask');
   setTimeout(function(){ sendQuestion(); }, 300);
@@ -7023,7 +7069,7 @@ function loadCommunityTrending() {
         var d = doc.data();
         var q = (d.question || '').substring(0, 65);
         html += '<div style="padding:7px 0;border-bottom:1px solid #1C3520;cursor:pointer;" '
-              + 'onclick="askFromCommunity(\'' + q.replace(/'/g, "\\'") + '\')">'
+              + 'onclick="askFromCommunity(\'' + q.replace(/'/g, "\\'") + '\',\'' + (d.vertical||'general') + '\')">'
               + '<div style="font-size:12px;color:#E8F5EA;font-weight:600;margin-bottom:3px;">'
               + q + (d.question.length > 65 ? '...' : '') + '</div>'
               + '<div style="font-size:10px;color:#4B7060;">up ' + (d.votes || 0) + '</div>'
