@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v44 — the "Upgrade Plan" button on the daily-limit message now appears everywhere this can happen, not just the main question flow — follow-ups, photo questions, photo follow-ups, and the Farm Calendar planner all previously showed a dead-end message with no way to reach Plans
-const CACHE = 'lifedesk-v44';
+// LifeDesk Service Worker v45 — pre-launch audit fix: found and fixed a duplicate timeAgo() function where the wrong one had silently won, breaking Home screen timestamps (showing "NaNm ago" instead of real times) on every visit. Also removed a dead, buggy duplicate of renderHistList found during the same audit.
+const CACHE = 'lifedesk-v45';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
