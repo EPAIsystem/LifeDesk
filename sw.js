@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v46 — Community Questions error handling improved to distinguish a missing Firestore index from other failures, and posting a question now has proper error handling (previously failed silently with no feedback if it failed)
-const CACHE = 'lifedesk-v46';
+// LifeDesk Service Worker v48 — added Relationships & Marriage as vertical #20 (courtship/marriage-prep framing, with an explicit content guardrail keeping it wholesome regardless of phrasing); also completed the Community filter/posting-form expansion to all 20 verticals (previously only 7 were selectable — including Food, which started this whole conversation)
+const CACHE = 'lifedesk-v48';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
