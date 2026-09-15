@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v45 — pre-launch audit fix: found and fixed a duplicate timeAgo() function where the wrong one had silently won, breaking Home screen timestamps (showing "NaNm ago" instead of real times) on every visit. Also removed a dead, buggy duplicate of renderHistList found during the same audit.
-const CACHE = 'lifedesk-v45';
+// LifeDesk Service Worker v46 — Community Questions error handling improved to distinguish a missing Firestore index from other failures, and posting a question now has proper error handling (previously failed silently with no feedback if it failed)
+const CACHE = 'lifedesk-v46';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
