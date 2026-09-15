@@ -2836,19 +2836,19 @@ function renderHomeRecent(items){
       '<span style="color:#A8A29E;font-size:14px;">›</span></div>';
   }).join('');
 }
-function renderHistList(items){
-  var el=g('hist-list');
-  if(!items.length){el.innerHTML='<div class="empty-box"><div class="ei">🕐</div><p style="font-size:13px;">No history yet.</p></div>';return;}
-  el.innerHTML=items.map(function(it){
-    return '<div class="hist-item" onclick="openVertical(\''+it.vertical+'\')">'+
-      '<div class="hist-top"><div class="hist-ico" style="background:'+(it.verticalBg||'#D4EDDA')+'">'+(it.verticalIcon||'💬')+'</div>'+
-      '<span class="hist-vert">'+(it.verticalName||it.vertical)+'</span>'+
-      '<span class="hist-time">'+timeAgo(it.timestamp)+'</span></div>'+
-      '<div class="hist-q">'+it.question+'</div>'+
-      '<div class="hist-prev">'+(it.answer||'')+'</div></div>';
-  }).join('');
+function timeAgo(input){
+  if(!input) return 'just now';
+  // Accepts either a Firestore Timestamp ({seconds:...}) or a plain JS Date —
+  // different call sites in the app pass different types, and having two
+  // separate functions with the same name meant only one convention actually
+  // worked at a time (the other silently produced "NaNm ago").
+  var epochSeconds = (typeof input.seconds === 'number') ? input.seconds : Math.floor(input.getTime()/1000);
+  var s = Math.floor(Date.now()/1000 - epochSeconds);
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
 }
-function timeAgo(ts){if(!ts||!ts.seconds)return 'just now';var s=Math.floor(Date.now()/1000-ts.seconds);if(s<60)return 'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
 
 // VERTICALS DATA
 var VD={
@@ -4677,13 +4677,6 @@ function escHTML(s) {
 }
 function escQ(s) {
   return (s||'').replace(/'/g,"\\'").replace(/\n/g,' ').substring(0,120);
-}
-function timeAgo(date) {
-  var secs = Math.floor((new Date() - date) / 1000);
-  if(secs < 60)    return 'just now';
-  if(secs < 3600)  return Math.floor(secs/60) + 'm ago';
-  if(secs < 86400) return Math.floor(secs/3600) + 'h ago';
-  return Math.floor(secs/86400) + 'd ago';
 }
 
 // ── HOOK INTO EXISTING FUNCTIONS ─────────────────────────
