@@ -6335,7 +6335,7 @@ function submitCommunityQ() {
         status: 'private_review',
         votes: 0, votedBy: [],
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      }).catch(function(e){ console.error('Post (private review) failed:', e); showToast('Could not submit — try again.'); });
       return;
     }
     db.collection('community_questions').add({
@@ -6351,6 +6351,9 @@ function submitCommunityQ() {
       if(txt) txt.value = '';
       hideAskForm();
       loadCommunityQuestions();
+    }).catch(function(e){
+      console.error('Post failed:', e);
+      showToast('Could not post your question (' + (e.code||'error') + '). Try again.');
     });
   });
 }
@@ -6417,8 +6420,12 @@ function loadCommunityQuestions() {
       el.innerHTML = html;
     })
     .catch(function(e) {
-      el.innerHTML = '<div class="empty-box">Error loading questions</div>';
       console.error(e);
+      if(e.code === 'failed-precondition' || (e.message && e.message.indexOf('index') !== -1)) {
+        el.innerHTML = '<div class="empty-box">This feature needs a one-time setup step in Firebase (a missing database index). Contact the app admin to finish setup.</div>';
+      } else {
+        el.innerHTML = '<div class="empty-box">Error loading questions (' + (e.code||'unknown') + ')</div>';
+      }
     });
 }
 
