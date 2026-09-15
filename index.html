@@ -70,6 +70,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 .ni.on .nic,.ni.on .nlb{color:var(--gn);font-weight:800;}
 .nic{font-size:21px;color:var(--t3);}
 .nlb{font-size:10px;color:var(--t3);font-weight:500;}
+.nlb-en{display:block;font-size:7px;opacity:.5;font-weight:400;margin-top:1px;}
 
 /* BUTTONS */
 .btn{border:none;cursor:pointer;font-family:"Nunito",sans-serif;font-weight:800;border-radius:14px;
@@ -2693,6 +2694,7 @@ function applyProfile(p){
     if(savedLang) {
       CUR_LANG = savedLang;
       var langVal = g('set-lang-val'); if(langVal) langVal.textContent = savedLang.flag + ' ' + savedLang.name;
+      if(typeof applyUITranslations === 'function') applyUITranslations();
     }
   }
   var pp={core:'$3.99',standard:'$6.99',premium:'$9.99'},pn={core:'Core',standard:'Standard',premium:'Premium'};
@@ -3049,7 +3051,7 @@ function buildSysPrompt(d){
   if(d.name.indexOf('Kids')>=0)base+='\n\nKIDS DESK - SAFE MODE:\n- Simple, age-appropriate language for children aged 4-12.\n- Use emojis. Encouraging and fun.\n- Never include anything scary, violent, or inappropriate.\n- Use African/Ghanaian examples children can relate to.\n- End with an encouraging note or fun challenge.';
   if(d.wholesome)base+='\n\nRELATIONSHIPS & MARRIAGE - TONE AND BOUNDARIES:\n- This vertical is about building healthy, committed relationships and strong marriages — courtship, communication, compatibility, marriage preparation, conflict resolution, family life.\n- Keep guidance wholesome and constructive, oriented toward commitment and mutual respect, not casual dating or hookups.\n- Never provide explicit sexual content, describe sexual acts, or engage with requests seeking sexual content — redirect firmly but kindly toward the relationship/marriage guidance this vertical is actually for.\n- Where the user\'s faith approach is relevant, let it inform the advice naturally, same as elsewhere in the app.\n- Treat sensitive topics (breakups, abuse, infidelity) with care and empathy, and suggest professional counseling where appropriate.';
   var langInstr = getLangPrompt();
-  if(langInstr) base += '\n\nLANGUAGE:\n- ' + langInstr + '\n- This applies to your ENTIRE response, not just a greeting.';
+  if(langInstr) base += '\n\nLANGUAGE:\n- ' + langInstr + '\n- This applies to your ENTIRE response, not just a greeting.\n- Do your genuine best to write fully in this language throughout, including structure words, transitions, and explanations — not just a few translated phrases dropped into otherwise-English sentences.\n- Only switch to English for a specific term that truly has no accepted equivalent (e.g. a proper noun, a technical/scientific term, or a brand name) — and even then, keep it to single words or short phrases, not whole sentences.\n- If you are genuinely not confident in this language for a long or complex answer, say so briefly at the start rather than silently drifting into English mid-response.';
   base += '\n\nWEB SEARCH DISCIPLINE:\n- If you already gathered research earlier in this conversation, do NOT search again just to continue writing more of the same document — reuse what you already found.\n- Only search when the user asks something genuinely new that requires current information.\n- Searching multiple times in one response, or on every follow-up turn, causes real timeouts for the user. Be deliberate: search once if needed, then write.';
   base += '\n\nLONG DELIVERABLES (business plans, reports, multi-section documents):\n- Each response has a firm length limit. If you try to fit an entire long document in one reply, it WILL get cut off mid-sentence with no warning — this is a real, bad experience for the user.\n- Instead, proactively break long deliverables into clear numbered pieces from the very start (e.g. "Piece 1 of 6: Executive Summary"). Keep each piece complete and self-contained — never end a piece mid-table, mid-list, or mid-sentence.\n- After each piece, briefly state what\'s covered so far and what\'s coming next, then invite the user to say "continue" or "next" for the next piece.\n- Judge piece size conservatively — when in doubt, make pieces shorter rather than risk a mid-sentence cutoff.';
   base += '\n\nWHAT LIFEDESK CAN DO:\n- LifeDesk has 20 life-area verticals, several with named specialist tools inside them — e.g. Recipe Creator (Food), Business Plan Writer (Business), AI Private Teacher (Education), Syllabus Coach (Education). There are many more across other verticals.\n- If someone asks something LifeDesk can genuinely help with — writing a recipe, a business plan, tutoring, etc. — never flatly say "I\'m not a recipe creator" or "I\'m not a business plan writer." That is confusing and technically inaccurate, since LifeDesk has exactly that capability, just organised under a specific vertical.\n- Instead: help directly right now with what they asked, and briefly mention that a more focused version of this tool lives under the relevant vertical if they want the deeper, guided experience.\n- Only clarify your identity as "LifeDesk" when someone asks a genuinely unrelated or out-of-scope question — not as a reason to decline something you can actually do.';
@@ -5491,10 +5493,50 @@ function renderLangList(filter) {
 }
 
 
+// ── UI TRANSLATION SYSTEM ───────────────────────────────────
+// This is a genuine start on translating the app SHELL itself (buttons, nav,
+// labels) — separate from AI answer content, which was already language-aware.
+// Full translation of every screen across all 32 languages is a large,
+// ongoing localization project, not something done in one pass — this covers
+// the bottom navigation bar (visible on every single screen) for a first
+// batch of languages. French/Spanish/Portuguese are high-confidence; the
+// Ghanaian local languages (Ewe, Twi, Hausa, Ga) are a careful best-effort
+// first pass and worth a native speaker's review before fully trusting them,
+// same caution that applies to AI-generated translations generally.
+var UI_STRINGS = {
+  fr: { Home:'Accueil', Ask:'Demander', History:'Historique', Profile:'Profil' },
+  es: { Home:'Inicio', Ask:'Preguntar', History:'Historial', Profile:'Perfil' },
+  pt: { Home:'Início', Ask:'Perguntar', History:'Histórico', Profile:'Perfil' },
+  ee: { Home:'Aƒeme', Ask:'Biã', History:'Gbeɖenyawo', Profile:'Ɖɔɖɔme' },
+  tw: { Home:'Efie', Ask:'Bisa', History:'Abakɔsɛm', Profile:'Wo ho nsɛm' },
+  ha: { Home:'Gida', Ask:'Tambaya', History:'Tarihi', Profile:'Bayanan ka' },
+  ar: { Home:'الرئيسية', Ask:'اسأل', History:'السجل', Profile:'الملف الشخصي' },
+  sw: { Home:'Nyumbani', Ask:'Uliza', History:'Historia', Profile:'Wasifu' },
+};
+
+function applyUITranslations(){
+  var langCode = CUR_LANG ? CUR_LANG.code : 'en';
+  var dict = UI_STRINGS[langCode];
+  document.querySelectorAll('.nlb').forEach(function(el){
+    var base = el.getAttribute('data-en');
+    if(!base) { base = el.textContent.trim(); el.setAttribute('data-en', base); }
+    var translated = (dict && dict[base]) ? dict[base] : base;
+    if(langCode === 'en' || translated === base) {
+      el.textContent = base;
+    } else {
+      // Show the translated word with the English original underneath, small
+      // and faded — this way the label is still recognizable/verifiable
+      // even for a language a user is less confident reading.
+      el.innerHTML = translated + '<span class="nlb-en">' + base + '</span>';
+    }
+  });
+}
+
 function selectLang(code) {
   var lang = LANGUAGES.find(function(l){ return l.code === code; });
   if(!lang) return;
   CUR_LANG = lang;
+  applyUITranslations();
   // Update STT language
   if(window.STT_recognition) { try { STT_recognition.lang = lang.sttCode; } catch(e){} }
   // Update settings display

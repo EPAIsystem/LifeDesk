@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v51 — MAJOR: the AI now genuinely recognizes and adopts any of its ~100+ named services (Recipe Creator, Business Plan Writer, AI Private Teacher, etc.) when mentioned by name in plain conversation, giving the same rich "I am your X" introduction as tapping the tile directly — not just a generic "I can help with that" acknowledgment
-const CACHE = 'lifedesk-v51';
+// LifeDesk Service Worker v53 — updated Ewe nav translations with corrected words, and translated nav labels now show the English original as a small faded subtitle underneath for clarity/verification
+const CACHE = 'lifedesk-v53';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
