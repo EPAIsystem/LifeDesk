@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v48 — added Relationships & Marriage as vertical #20 (courtship/marriage-prep framing, with an explicit content guardrail keeping it wholesome regardless of phrasing); also completed the Community filter/posting-form expansion to all 20 verticals (previously only 7 were selectable — including Food, which started this whole conversation)
-const CACHE = 'lifedesk-v48';
+// LifeDesk Service Worker v50 — AI no longer flatly denies capabilities LifeDesk actually has (e.g. "I'm not a recipe creator" when Food's Recipe Creator service exists) — now helps directly and points to the dedicated tool when relevant
+const CACHE = 'lifedesk-v50';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
