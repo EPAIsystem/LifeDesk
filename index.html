@@ -3206,6 +3206,17 @@ function sendQuestion(){
   var txt=g('ask-input').value.trim();if(!txt)return;
   LAST_Q=txt;
   g('ask-input').value='';
+  // Recognize a named service mentioned in plain conversation (e.g. "recipe
+  // creator", "business plan writer") and genuinely adopt that role — same
+  // rich introduction as tapping its tile directly — rather than just
+  // acknowledging it exists in passing.
+  var mentioned = detectMentionedService(txt);
+  if(mentioned && !(CURRENT_SERVICE && CURRENT_SERVICE.name === mentioned.name)){
+    CURRENT_SERVICE = mentioned.service;
+    CURRENT_SERVICE_VERTICAL = mentioned.vertical;
+    SERVICE_INTRO_PENDING = true;
+    CV = mentioned.vertical;
+  }
   var d=VD[CV]||VD.farming;
   // Reset answer display for fresh question
   g('ans-question').textContent=txt;
@@ -7812,6 +7823,34 @@ var VERTICAL_SERVICES = {
 var CURRENT_SERVICE = null;
 var CURRENT_SERVICE_VERTICAL = null;
 var SERVICE_INTRO_PENDING = false;
+
+// Flat, searchable index of every named service across every vertical (built
+// once from VERTICAL_SERVICES). Lets the app recognize when someone mentions
+// a service like "Recipe Creator" or "Business Plan Writer" by name in plain
+// conversation — not just when they tap its tile — and respond by genuinely
+// adopting that role (the same rich "I am your X" introduction the tile
+// gives), instead of a generic "I can help with that" patch.
+var SERVICE_NAME_INDEX = (function(){
+  var idx = [];
+  Object.keys(VERTICAL_SERVICES).forEach(function(vKey){
+    (VERTICAL_SERVICES[vKey].services || []).forEach(function(svc){
+      idx.push({ name: svc.name, nameLower: svc.name.toLowerCase(), vertical: vKey, service: svc });
+    });
+  });
+  // Longest names first, so "Business Plan Writer" is matched before any
+  // shorter, more generic name that might also technically appear inside it.
+  idx.sort(function(a,b){ return b.nameLower.length - a.nameLower.length; });
+  return idx;
+})();
+
+function detectMentionedService(text){
+  if(!text) return null;
+  var lower = text.toLowerCase();
+  for(var i=0;i<SERVICE_NAME_INDEX.length;i++){
+    if(lower.indexOf(SERVICE_NAME_INDEX[i].nameLower) !== -1) return SERVICE_NAME_INDEX[i];
+  }
+  return null;
+}
 
 // ── VERTICAL INTRO SCREEN CSS ────────────────────────────────────────────────
 (function() {
