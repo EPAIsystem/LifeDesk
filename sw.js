@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v53 — updated Ewe nav translations with corrected words, and translated nav labels now show the English original as a small faded subtitle underneath for clarity/verification
-const CACHE = 'lifedesk-v53';
+// LifeDesk Service Worker v54 — added deep-linking (?service=recipe-creator or ?v=farming in the URL) so ads/search links can land a prospect directly inside the specific service they searched for, already introduced and ready to help, instead of a generic homepage
+const CACHE = 'lifedesk-v54';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {

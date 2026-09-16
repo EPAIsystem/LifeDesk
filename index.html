@@ -2475,7 +2475,7 @@ auth.onAuthStateChanged(function(user){
     CU=user;showLoading('Loading your profile...');
     db.collection('users').doc(user.uid).get()
       .then(function(snap){
-        if(snap.exists){UP=snap.data();applyProfile(UP);loadHistory();loadUserSettings(user.uid);restoreLastScreenOrHome();}
+        if(snap.exists){UP=snap.data();applyProfile(UP);loadHistory();loadUserSettings(user.uid);if(!applyPendingDeepLink())restoreLastScreenOrHome();}
         else{showScreen('s-onboard');}
         hideLoading();
       }).catch(function(){hideLoading();showToast('Error loading profile');showScreen('s-onboard');});
@@ -2662,7 +2662,7 @@ function finishOnboarding(){
     locality:ci+' \u00b7 '+r+' \u00b7 '+co,plan:'free',isPaid:false,verticals:SV,faithApproach:SF,denomination:dn,otherFaith:of,
     trialStart:firebase.firestore.FieldValue.serverTimestamp(),questionsAsked:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   db.collection('users').doc(CU.uid).set(prof)
-    .then(function(){UP=prof;applyProfile(prof);showToast('Welcome to LifeDesk!');showScreen('s-home');})
+    .then(function(){UP=prof;applyProfile(prof);showToast('Welcome to LifeDesk!');if(!applyPendingDeepLink())showScreen('s-home');})
     .catch(function(){btn.disabled=false;btn.textContent='Enter LifeDesk';showToast('Error saving. Try again.');});
 }
 
@@ -7876,7 +7876,8 @@ var SERVICE_NAME_INDEX = (function(){
   var idx = [];
   Object.keys(VERTICAL_SERVICES).forEach(function(vKey){
     (VERTICAL_SERVICES[vKey].services || []).forEach(function(svc){
-      idx.push({ name: svc.name, nameLower: svc.name.toLowerCase(), vertical: vKey, service: svc });
+      var slug = svc.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+      idx.push({ name: svc.name, nameLower: svc.name.toLowerCase(), slug: slug, vertical: vKey, service: svc });
     });
   });
   // Longest names first, so "Business Plan Writer" is matched before any
@@ -7892,6 +7893,54 @@ function detectMentionedService(text){
     if(lower.indexOf(SERVICE_NAME_INDEX[i].nameLower) !== -1) return SERVICE_NAME_INDEX[i];
   }
   return null;
+}
+
+// ── DEEP LINKING ─────────────────────────────────────────────
+// Lets an ad or search-engine link land a prospect directly inside the
+// specific service/vertical they were looking for, already introduced and
+// ready to help — instead of everyone landing on the same generic homepage
+// regardless of what they actually searched for.
+//   ?service=recipe-creator   -> opens that named service, AI introduces itself
+//   ?v=farming                -> opens that vertical's ask screen
+// Captured on load (works whether the person is already signed in or not —
+// if not, it is remembered and applied right after they finish signing up).
+var PENDING_DEEPLINK = (function(){
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var serviceSlug = params.get('service');
+    var verticalCode = params.get('v');
+    if(serviceSlug) {
+      var match = SERVICE_NAME_INDEX.find(function(s){ return s.slug === serviceSlug; });
+      if(match) return { type:'service', slug: serviceSlug };
+    }
+    if(verticalCode && VD[verticalCode]) return { type:'vertical', vertical: verticalCode };
+  } catch(e) {}
+  return null;
+})();
+
+function applyPendingDeepLink(){
+  if(!PENDING_DEEPLINK) return false;
+  var link = PENDING_DEEPLINK;
+  PENDING_DEEPLINK = null;
+  if(link.type === 'service') {
+    var match = SERVICE_NAME_INDEX.find(function(s){ return s.slug === link.slug; });
+    if(!match) return false;
+    CURRENT_SERVICE = match.service;
+    CURRENT_SERVICE_VERTICAL = match.vertical;
+    SERVICE_INTRO_PENDING = true;
+    CV = match.vertical;
+    openVertical(CV);
+    setTimeout(function(){
+      g('ask-input').value = 'Hi, I\'d like help with ' + match.name + '.';
+      sendQuestion();
+    }, 60);
+    return true;
+  }
+  if(link.type === 'vertical') {
+    openVertical(link.vertical);
+    return true;
+  }
+  return false;
 }
 
 // ── VERTICAL INTRO SCREEN CSS ────────────────────────────────────────────────
