@@ -1733,7 +1733,11 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     </div>
     <div class="prayer-section-lbl">Breakdown by Plan</div>
     <div id="as-byplan" style="margin-bottom:16px;"></div>
-    <div style="font-size:11px;color:#9CA3AF;line-height:1.6;">Paid = plan not equal to Free with an unexpired planExpiry. Failed Renewals = users whose last renewal attempt failed and were moved back to Free.</div>
+    <div class="prayer-section-lbl">Users by Country</div>
+    <div id="as-bycountry" style="margin-bottom:16px;"></div>
+    <div class="prayer-section-lbl">Users by Region (Top 10)</div>
+    <div id="as-byregion" style="margin-bottom:16px;"></div>
+    <div style="font-size:11px;color:#9CA3AF;line-height:1.6;">Paid = plan not equal to Free with an unexpired planExpiry. Failed Renewals = users whose last renewal attempt failed and were moved back to Free. Location breakdown shows counts only — never tied to any individual user's identity.</div>
   </div>
   <div id="admin-stats-error" style="display:none;text-align:center;padding:40px 20px;color:#B91C1C;font-size:13px;"></div>
 </div>
@@ -5983,6 +5987,26 @@ function loadAdminStats() {
           '<span style="font-weight:700;">'+name+'</span><span>'+data.byPlan[name]+'</span></div>';
       }).join('');
     }
+    function renderGeoBreakdown(targetId, dict, limit){
+      var el = document.getElementById(targetId);
+      if(!el) return;
+      var entries = Object.keys(dict||{}).map(function(k){ return [k, dict[k]]; });
+      if(!entries.length){ el.innerHTML = '<div style="font-size:12px;color:#9CA3AF;">No location data yet.</div>'; return; }
+      entries.sort(function(a,b){ return b[1]-a[1]; });
+      if(limit) entries = entries.slice(0, limit);
+      var maxCount = entries[0][1];
+      el.innerHTML = entries.map(function(e){
+        var pct = Math.round((e[1]/maxCount)*100);
+        return '<div style="margin-bottom:8px;">'+
+          '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;">'+
+            '<span style="font-weight:700;">'+e[0]+'</span><span>'+e[1]+'</span></div>'+
+          '<div style="background:var(--bd);border-radius:6px;height:6px;overflow:hidden;">'+
+            '<div style="background:var(--gn);height:100%;width:'+pct+'%;"></div></div>'+
+        '</div>';
+      }).join('');
+    }
+    renderGeoBreakdown('as-bycountry', data.byCountry, null);
+    renderGeoBreakdown('as-byregion', data.byRegion, 10);
   }).catch(function(e){
     if(loadingEl) loadingEl.style.display = 'none';
     if(errEl) { errEl.style.display = 'block'; errEl.textContent = 'Could not reach the server. Try again.'; }

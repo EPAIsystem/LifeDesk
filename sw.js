@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v55 — fixed Legal vertical's user-facing text, which said "Ghana" in its tagline/subtitle even though the AI underneath was already built to be globally adaptive; added explicit jurisdiction-awareness instruction so Legal actively confirms/adapts to the user's actual country instead of assuming Ghana
-const CACHE = 'lifedesk-v55';
+// LifeDesk Service Worker v56 — Admin Dashboard now shows users by country and by region (top 10), privacy-safe aggregate counts only, never tied to individual identity — helps decide where to focus promotion
+const CACHE = 'lifedesk-v56';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
