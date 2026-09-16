@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v54 — added deep-linking (?service=recipe-creator or ?v=farming in the URL) so ads/search links can land a prospect directly inside the specific service they searched for, already introduced and ready to help, instead of a generic homepage
-const CACHE = 'lifedesk-v54';
+// LifeDesk Service Worker v55 — fixed Legal vertical's user-facing text, which said "Ghana" in its tagline/subtitle even though the AI underneath was already built to be globally adaptive; added explicit jurisdiction-awareness instruction so Legal actively confirms/adapts to the user's actual country instead of assuming Ghana
+const CACHE = 'lifedesk-v55';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
