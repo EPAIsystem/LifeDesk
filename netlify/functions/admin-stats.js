@@ -76,12 +76,31 @@ exports.handler = async (event) => {
       byPlan[p] = (byPlan[p] || 0) + 1;
     });
 
+    // Geographic breakdown — for deciding where to focus promotion, not for
+    // identifying any individual user. Only pulls the country/region fields
+    // (via .select), never names, emails, or any other personal data — and
+    // only ever returns aggregate counts, never a per-user location.
+    const geoSnap = await usersRef.select("country", "region").get();
+    const byCountry = {};
+    const byRegion = {}; // "Country · Region", so regions in different countries don't collide
+    geoSnap.forEach((doc) => {
+      const d = doc.data();
+      const country = (d.country || "Unknown").trim() || "Unknown";
+      byCountry[country] = (byCountry[country] || 0) + 1;
+      if (d.region && d.region.trim()) {
+        const key = country + " · " + d.region.trim();
+        byRegion[key] = (byRegion[key] || 0) + 1;
+      }
+    });
+
     const result = {
       total: total,
       free: free,
       paid: paid,
       renewalFailed: failedSnap.data().count,
       byPlan,
+      byCountry,
+      byRegion,
     };
 
     return { statusCode: 200, headers, body: JSON.stringify(result) };
