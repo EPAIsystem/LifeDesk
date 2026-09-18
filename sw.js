@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v56 — Admin Dashboard now shows users by country and by region (top 10), privacy-safe aggregate counts only, never tied to individual identity — helps decide where to focus promotion
-const CACHE = 'lifedesk-v56';
+// LifeDesk Service Worker v57 — added an accessible Event Planner service under Home & Family (weddings, funerals, birthdays, church events) — previously event planning only existed as a "Premium Event Planner" locked under Luxury Goods, which most people wouldn't think to check
+const CACHE = 'lifedesk-v57';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function(e) {
