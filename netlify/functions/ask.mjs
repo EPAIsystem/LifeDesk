@@ -135,6 +135,14 @@ export default async (req) => {
           max_tokens: body.max_tokens || 1800,
           system: body.system || "You are LifeDesk, a helpful AI life advisor.",
           messages: body.messages || [],
+          // Prompt caching: the system prompt (and the stable prefix of a
+          // growing conversation history) gets reused across follow-up turns
+          // instead of being billed fresh every time. Cache reads cost ~10%
+          // of normal input price — this matters most exactly where LifeDesk
+          // spends the most tokens: long follow-up chains (multi-part
+          // business plans, tutoring sessions, etc.) where the system prompt
+          // and earlier turns stay identical call after call.
+          cache_control: { type: "ephemeral" },
           ...(body.tools && body.tools.length ? { tools: body.tools } : {}),
         });
 
@@ -143,6 +151,13 @@ export default async (req) => {
         });
 
         const finalMessage = await stream.finalMessage();
+        const u = finalMessage.usage || {};
+        console.log(
+          "ask.mjs usage — input:", u.input_tokens,
+          "| cache_read:", u.cache_read_input_tokens || 0,
+          "| cache_write:", u.cache_creation_input_tokens || 0,
+          "| output:", u.output_tokens
+        );
         controller.enqueue(ndjson({ done: true, stop_reason: finalMessage.stop_reason }));
         controller.close();
       } catch (err) {
