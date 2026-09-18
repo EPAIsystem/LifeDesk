@@ -8,6 +8,9 @@
 [functions."check-renewals"]
   schedule = "@daily"
 
+[functions."send-reminders"]
+  schedule = "@daily"
+
 [[redirects]]
   from = "/api/ask"
   to = "/.netlify/functions/ask"

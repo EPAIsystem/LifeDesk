@@ -1,6 +1,36 @@
-// LifeDesk Service Worker v57 — added an accessible Event Planner service under Home & Family (weddings, funerals, birthdays, church events) — previously event planning only existed as a "Premium Event Planner" locked under Luxury Goods, which most people wouldn't think to check
-const CACHE = 'lifedesk-v57';
+// LifeDesk Service Worker v58 — merged Firebase Cloud Messaging background push handling into this existing service worker (not a separate firebase-messaging-sw.js, which would compete for control of the page with this one)
+const CACHE = 'lifedesk-v58';
 const ASSETS = ['/', '/index.html'];
+
+// ── PUSH NOTIFICATIONS (background) ──────────────────────
+// Handles a push notification arriving while the app is closed or in the
+// background. Foreground notifications (app open) are handled separately,
+// in index.html, as an in-app toast instead.
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
+firebase.initializeApp({
+  apiKey: "AIzaSyBZ8QfJpAu2sUyasGV60bWti_WNCln8t3g",
+  authDomain: "lifedesk-5587c.firebaseapp.com",
+  projectId: "lifedesk-5587c",
+  storageBucket: "lifedesk-5587c.firebasestorage.app",
+  messagingSenderId: "401661349678",
+  appId: "1:401661349678:web:92e94fffe8a3cb09a334bf"
+});
+try {
+  const messaging = firebase.messaging();
+  messaging.onBackgroundMessage(function(payload) {
+    var title = (payload.notification && payload.notification.title) || 'LifeDesk';
+    var options = {
+      body: (payload.notification && payload.notification.body) || '',
+      icon: '/icon-192.png',
+      badge: '/icon-96.png',
+    };
+    self.registration.showNotification(title, options);
+  });
+} catch (e) {
+  console.warn('SW: Firebase Messaging init failed', e);
+}
+
 
 self.addEventListener('install', function(e) {
   e.waitUntil(

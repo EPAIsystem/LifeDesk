@@ -1687,7 +1687,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div class="set-item" onclick="openLangModal()" style="cursor:pointer;"><div class="set-ico" style="background:#DBEAFE;">&#127760;</div><span class="set-lbl">Language</span><span class="set-val" id="set-lang-val">English</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
     <div class="set-item" onclick="openVoiceModal()" style="cursor:pointer;"><div class="set-ico" style="background:#EDE9FE;">&#128266;</div><span class="set-lbl">Voice Profile</span><span class="set-val" id="set-voice-val">Default</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
     <div class="set-item" onclick="openColorModal()" style="cursor:pointer;"><div class="set-ico" style="background:#D4EDDA;">&#127912;</div><span class="set-lbl">App Colour</span><span class="set-val" id="set-color-val">Forest Green</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
-    <div class="set-item"><div class="set-ico" style="background:#FEF3C0;">🔔</div><span class="set-lbl">Notifications</span><span class="set-val">On</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
+    <div class="set-item" onclick="openNotificationsModal()" style="cursor:pointer;"><div class="set-ico" style="background:#FEF3C0;">🔔</div><span class="set-lbl">Notifications</span><span class="set-val" id="set-notif-val">Off</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
     <div class="set-item" onclick="openReferral()" style="cursor:pointer;"><div class="set-ico" style="background:#FCE7F3;">👥</div><span class="set-lbl">Refer a Friend</span><span class="set-val">Get 2 wks free</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
   </div>
   <!-- Legal links -->
@@ -2222,6 +2222,36 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 
 
 <!-- ===== PAYMENT CONFIRMATION MODAL ===== -->
+<!-- ===== WELCOME STARTERS MODAL (first-open, new accounts only) ===== -->
+<div class='settings-modal' id='welcome-starters-modal' style='display:none;' onclick='if(event.target===this)closeModal("welcome-starters-modal")'>
+<div class='settings-sheet'>
+  <div class='settings-sheet-hdr'>
+    <span class='settings-sheet-title'>Welcome to LifeDesk! 🌿</span>
+    <button class='settings-sheet-close' onclick='closeModal("welcome-starters-modal")'>&#x2715;</button>
+  </div>
+  <div class='settings-sheet-body'>
+    <div style='font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:16px;'>You've got 20 life areas to explore — here are a few popular ones to try first:</div>
+    <div onclick="startWelcomeService('Recipe Creator','food')" style='display:flex;align-items:center;gap:12px;padding:14px;background:var(--sf);border-radius:14px;margin-bottom:10px;cursor:pointer;'>
+      <span style='font-size:26px;'>🍲</span>
+      <div><div style='font-weight:800;font-size:14px;'>Recipe Creator</div><div style='font-size:12px;color:#6B7280;'>Turn what's in your kitchen into a meal</div></div>
+    </div>
+    <div onclick="startWelcomeService('CV Builder','jobs')" style='display:flex;align-items:center;gap:12px;padding:14px;background:var(--sf);border-radius:14px;margin-bottom:10px;cursor:pointer;'>
+      <span style='font-size:26px;'>💼</span>
+      <div><div style='font-weight:800;font-size:14px;'>CV Builder</div><div style='font-size:12px;color:#6B7280;'>Build a CV that gets noticed</div></div>
+    </div>
+    <div onclick="startWelcomeService('AI Private Teacher','education')" style='display:flex;align-items:center;gap:12px;padding:14px;background:var(--sf);border-radius:14px;margin-bottom:10px;cursor:pointer;'>
+      <span style='font-size:26px;'>📚</span>
+      <div><div style='font-weight:800;font-size:14px;'>AI Private Teacher</div><div style='font-size:12px;color:#6B7280;'>Any subject, any level, 24/7</div></div>
+    </div>
+    <div onclick="startWelcomeService('Prayer Guide','religion')" style='display:flex;align-items:center;gap:12px;padding:14px;background:var(--sf);border-radius:14px;margin-bottom:16px;cursor:pointer;'>
+      <span style='font-size:26px;'>🙏</span>
+      <div><div style='font-weight:800;font-size:14px;'>Prayer Guide</div><div style='font-size:12px;color:#6B7280;'>Guided prayer, anytime you need it</div></div>
+    </div>
+    <button class='btn' style='background:var(--sf);color:var(--tx);' onclick='closeModal("welcome-starters-modal")'>I'll explore on my own</button>
+  </div>
+</div>
+</div>
+
 <div class='settings-modal' id='payment-confirm-modal' style='display:none;' onclick='if(event.target===this)closeModal("payment-confirm-modal")'>
 <div class='settings-sheet'>
   <div class='settings-sheet-hdr'>
@@ -2317,6 +2347,22 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 </div>
 
 <!-- ===== SAVE ANSWERS ON DEVICE MODAL ===== -->
+<!-- ===== NOTIFICATIONS MODAL ===== -->
+<div class='settings-modal' id='notifications-modal' style='display:none;' onclick='if(event.target===this)closeModal("notifications-modal")'>
+<div class='settings-sheet'>
+  <div class='settings-sheet-hdr'>
+    <span class='settings-sheet-title'>Notifications</span>
+    <button class='settings-sheet-close' onclick='closeModal("notifications-modal")'>&#x2715;</button>
+  </div>
+  <div class='settings-sheet-body'>
+    <div style='font-size:12px;color:#6B7280;line-height:1.7;margin-bottom:16px;'>Get gentle reminders about the life areas LifeDesk can help with, and updates on your account. You can turn this off any time.</div>
+    <div id='notif-status-line' style='font-size:13px;font-weight:700;margin-bottom:14px;'></div>
+    <button class='btn btn-primary' id='notif-enable-btn' onclick='requestNotificationPermission()'>Enable Notifications</button>
+    <div id='notif-blocked-note' style='display:none;font-size:12px;color:#B91C1C;line-height:1.6;margin-top:10px;'>Notifications are blocked in your browser/phone settings. To enable them, go to your device's notification settings for this app and allow them, then come back here.</div>
+  </div>
+</div>
+</div>
+
 <div class='settings-modal' id='localsave-modal' style='display:none;' onclick='if(event.target===this)closeModal("localsave-modal")'>
 <div class='settings-sheet'>
   <div class='settings-sheet-hdr'>
@@ -2401,6 +2447,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 <script>
 // Firebase initialisation
 firebase.initializeApp({
@@ -2412,6 +2459,13 @@ firebase.initializeApp({
   appId:"1:401661349678:web:92e94fffe8a3cb09a334bf"
 });
 var auth=firebase.auth(), db=firebase.firestore();
+// PUSH NOTIFICATIONS — the VAPID key below must be replaced with the real
+// one from Firebase Console → Project Settings → Cloud Messaging → Web Push
+// certificates → Generate key pair. Notifications will not work until this
+// placeholder is replaced with that real key.
+var FCM_VAPID_KEY = 'REPLACE_WITH_YOUR_VAPID_KEY';
+var messaging = null;
+try { if(firebase.messaging.isSupported && firebase.messaging.isSupported()) messaging = firebase.messaging(); } catch(e) { console.warn('Messaging not supported:', e); }
 var CU=null,UP=null,CS='s-auth',CV='farming',CH=[],SP='standard',SV=['farming','education'],SF='bible',OS=0;
 function g(id){return document.getElementById(id);}
 function showScreen(id, fromNav) {
@@ -2666,7 +2720,7 @@ function finishOnboarding(){
     locality:ci+' \u00b7 '+r+' \u00b7 '+co,plan:'free',isPaid:false,verticals:SV,faithApproach:SF,denomination:dn,otherFaith:of,
     trialStart:firebase.firestore.FieldValue.serverTimestamp(),questionsAsked:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   db.collection('users').doc(CU.uid).set(prof)
-    .then(function(){UP=prof;applyProfile(prof);showToast('Welcome to LifeDesk!');if(!applyPendingDeepLink())showScreen('s-home');})
+    .then(function(){UP=prof;applyProfile(prof);showToast('Welcome to LifeDesk!');if(!applyPendingDeepLink()){showScreen('s-home');setTimeout(showWelcomeStartersModal, 500);}})
     .catch(function(){btn.disabled=false;btn.textContent='Enter LifeDesk';showToast('Error saving. Try again.');});
 }
 
@@ -2686,6 +2740,8 @@ function applyProfile(p){
   }
   var searchVal = g('set-search-val'); if(searchVal) searchVal.textContent = LIVE_SEARCH_ENABLED ? 'Enabled ✓' : 'Disabled';
   var localSaveVal = g('set-localsave-val'); if(localSaveVal) localSaveVal.textContent = (localStorage.getItem('ld_local_save') !== '0') ? 'Enabled ✓' : 'Disabled';
+  var notifVal = g('set-notif-val');
+  if(notifVal) notifVal.textContent = (('Notification' in window) && Notification.permission === 'granted') ? 'On' : 'Off';
   if(p.renewalFailed) {
     setTimeout(function(){
       showToast(p.renewalFailReason === 'no_saved_card'
@@ -2825,7 +2881,7 @@ function saveHistory(q,a,v){
     verticalName:d.name||v,verticalIcon:d.icon||'💬',verticalBg:d.bg||'#D4EDDA',
     timestamp:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){
-    db.collection('users').doc(CU.uid).update({questionsAsked:firebase.firestore.FieldValue.increment(1)});
+    db.collection('users').doc(CU.uid).update({questionsAsked:firebase.firestore.FieldValue.increment(1), lastActiveAt:firebase.firestore.FieldValue.serverTimestamp()});
     var el=g('stat-questions');if(el)el.textContent=parseInt(el.textContent||0)+1;
   }).catch(function(e){console.warn('History:',e);});
 }
@@ -5745,6 +5801,69 @@ function openLocalSaveModal() {
   if(toggle) toggle.checked = enabled;
   el.style.display = 'flex';
 }
+// ── PUSH NOTIFICATIONS ───────────────────────────────────
+function openNotificationsModal() {
+  var el = document.getElementById('notifications-modal');
+  if(!el) return;
+  updateNotifStatusLine();
+  el.style.display = 'flex';
+}
+function updateNotifStatusLine() {
+  var line = document.getElementById('notif-status-line');
+  var btn = document.getElementById('notif-enable-btn');
+  var blockedNote = document.getElementById('notif-blocked-note');
+  var val = document.getElementById('set-notif-val');
+  if(!('Notification' in window) || !messaging) {
+    if(line) line.textContent = 'Not supported on this browser.';
+    if(btn) btn.style.display = 'none';
+    if(val) val.textContent = 'Unavailable';
+    return;
+  }
+  var perm = Notification.permission;
+  if(perm === 'granted') {
+    if(line) { line.textContent = '✅ Notifications are enabled.'; line.style.color = '#1E6B45'; }
+    if(btn) btn.style.display = 'none';
+    if(blockedNote) blockedNote.style.display = 'none';
+    if(val) val.textContent = 'On';
+  } else if(perm === 'denied') {
+    if(line) { line.textContent = '🔕 Notifications are blocked.'; line.style.color = '#B91C1C'; }
+    if(btn) btn.style.display = 'none';
+    if(blockedNote) blockedNote.style.display = 'block';
+    if(val) val.textContent = 'Off';
+  } else {
+    if(line) { line.textContent = 'Notifications are not enabled yet.'; line.style.color = '#6B7280'; }
+    if(btn) btn.style.display = 'block';
+    if(blockedNote) blockedNote.style.display = 'none';
+    if(val) val.textContent = 'Off';
+  }
+}
+function requestNotificationPermission() {
+  if(!('Notification' in window) || !messaging) { showToast('Notifications are not supported on this browser.'); return; }
+  Notification.requestPermission().then(function(permission){
+    updateNotifStatusLine();
+    if(permission !== 'granted') { showToast('Notifications were not enabled.'); return; }
+    navigator.serviceWorker.getRegistration().then(function(reg){
+      messaging.getToken({ vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: reg }).then(function(token){
+        if(!token || !CU) return;
+        db.collection('users').doc(CU.uid).update({ fcmToken: token, fcmTokenUpdatedAt: firebase.firestore.FieldValue.serverTimestamp() })
+          .then(function(){ showToast('🔔 Notifications enabled!'); })
+          .catch(function(e){ console.warn('FCM token save failed:', e); });
+      }).catch(function(e){ console.error('FCM getToken failed:', e); showToast('Could not enable notifications. Try again.'); });
+    });
+  });
+}
+// Foreground messages (app open when a notification arrives) — show as an
+// in-app toast rather than relying on the OS notification tray.
+if(messaging) {
+  try {
+    messaging.onMessage(function(payload){
+      var title = (payload.notification && payload.notification.title) || 'LifeDesk';
+      var body = (payload.notification && payload.notification.body) || '';
+      showToast('🔔 ' + title + (body ? ' — ' + body : ''));
+    });
+  } catch(e) {}
+}
+
 function toggleLocalSave(on) {
   try { localStorage.setItem('ld_local_save', on ? '1' : '0'); } catch(e) {}
   if(!on) {
@@ -7913,6 +8032,25 @@ var SERVICE_NAME_INDEX = (function(){
   idx.sort(function(a,b){ return b.nameLower.length - a.nameLower.length; });
   return idx;
 })();
+
+function showWelcomeStartersModal(){
+  var el = document.getElementById('welcome-starters-modal');
+  if(el) el.style.display = 'flex';
+}
+function startWelcomeService(serviceName, vertical){
+  closeModal('welcome-starters-modal');
+  var match = SERVICE_NAME_INDEX.find(function(s){ return s.name === serviceName; });
+  if(!match){ openVertical(vertical); return; }
+  CURRENT_SERVICE = match.service;
+  CURRENT_SERVICE_VERTICAL = match.vertical;
+  SERVICE_INTRO_PENDING = true;
+  CV = match.vertical;
+  openVertical(CV);
+  setTimeout(function(){
+    g('ask-input').value = 'Hi, I\'d like help with ' + match.name + '.';
+    sendQuestion();
+  }, 60);
+}
 
 function detectMentionedService(text){
   if(!text) return null;
