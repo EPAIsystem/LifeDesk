@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v58 — merged Firebase Cloud Messaging background push handling into this existing service worker (not a separate firebase-messaging-sw.js, which would compete for control of the page with this one)
-const CACHE = 'lifedesk-v58';
+// LifeDesk Service Worker v59 — real VAPID key wired in, push notifications now fully activated end to end
+const CACHE = 'lifedesk-v59';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
