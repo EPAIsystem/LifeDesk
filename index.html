@@ -1732,6 +1732,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div class="set-item" onclick="openVoiceModal()" style="cursor:pointer;"><div class="set-ico" style="background:#EDE9FE;">&#128266;</div><span class="set-lbl">Voice Profile</span><span class="set-val" id="set-voice-val">Default</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
     <div class="set-item" onclick="openColorModal()" style="cursor:pointer;"><div class="set-ico" style="background:#D4EDDA;">&#127912;</div><span class="set-lbl">App Colour</span><span class="set-val" id="set-color-val">Forest Green</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
     <div class="set-item" onclick="openNotificationsModal()" style="cursor:pointer;"><div class="set-ico" style="background:#FEF3C0;">🔔</div><span class="set-lbl">Notifications</span><span class="set-val" id="set-notif-val">Off</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
+    <div class="set-item" onclick="shareApp()" style="cursor:pointer;"><div class="set-ico" style="background:#DBEAFE;">🔗</div><span class="set-lbl">Share LifeDesk</span><span class="set-val">Send to a friend</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
     <div class="set-item" onclick="openReferral()" style="cursor:pointer;"><div class="set-ico" style="background:#FCE7F3;">👥</div><span class="set-lbl">Refer a Friend</span><span class="set-val">Get 2 wks free</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
   </div>
   <!-- Legal links -->
@@ -3339,12 +3340,18 @@ function sendQuestion(){
   var txt=g('ask-input').value.trim();if(!txt)return;
   LAST_Q=txt;
   g('ask-input').value='';
+  if(detectAppIdentityQuestion(txt)){
+    CURRENT_SERVICE = null;
+    CURRENT_SERVICE_VERTICAL = null;
+    SERVICE_INTRO_PENDING = false;
+    CV = 'general';
+  }
   // Recognize a named service mentioned in plain conversation (e.g. "recipe
   // creator", "business plan writer") and genuinely adopt that role — same
   // rich introduction as tapping its tile directly — rather than just
   // acknowledging it exists in passing.
   var mentioned = detectMentionedService(txt);
-  if(mentioned && !(CURRENT_SERVICE && CURRENT_SERVICE.name === mentioned.name)){
+  if(mentioned && !(CURRENT_SERVICE && CURRENT_SERVICE.name === mentioned.name) && !detectAppIdentityQuestion(txt)){
     CURRENT_SERVICE = mentioned.service;
     CURRENT_SERVICE_VERTICAL = mentioned.vertical;
     SERVICE_INTRO_PENDING = true;
@@ -3411,6 +3418,12 @@ function sendQuestion(){
 function sendFollowUp(){
   var txt=g('followup-input').value.trim();if(!txt)return;
   g('followup-input').value='';
+  if(detectAppIdentityQuestion(txt)){
+    CURRENT_SERVICE = null;
+    CURRENT_SERVICE_VERTICAL = null;
+    SERVICE_INTRO_PENDING = false;
+    CV = 'general';
+  }
   var d=VD[CV]||VD.farming,body=g('ans-body');
   var qEl=document.createElement('div');qEl.className='qbub';qEl.textContent=txt;body.appendChild(qEl);
   var wrap=document.createElement('div');wrap.className='abub-wrap';
@@ -4654,6 +4667,25 @@ function copyAnswerToClipboard(el) {
   }
 }
 
+function shareApp() {
+  var shareData = {
+    title: 'LifeDesk — AI Life Advisor',
+    text: 'I\'ve been using LifeDesk — a free AI advisor for farming, business, health, education and more. Worth trying!',
+    url: 'https://livedesk-ai.netlify.app/'
+  };
+  if(navigator.share) {
+    navigator.share(shareData).catch(function(e){ /* user cancelled — no error needed */ });
+  } else if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareData.text + ' ' + shareData.url).then(function(){
+      showToast('📋 Link copied — paste it anywhere to share!');
+    }).catch(function(){
+      showToast('Could not share. Try again.');
+    });
+  } else {
+    showToast('Sharing is not supported on this device.');
+  }
+}
+
 function shareAnswer() {
   if(!LAST_ANS.q) { showToast('Ask a question first'); return; }
   shareQA(LAST_ANS.q, LAST_ANS.a);
@@ -5492,9 +5524,16 @@ function restoreLastScreenOrHome() {
 
 function updateNavButtons(){
   var fb = document.getElementById('global-fwd-btn');
-  if(fb) fb.style.display = FORWARD_HIST.length ? 'flex' : 'none';
   var hb = document.getElementById('global-home-btn');
-  if(hb) hb.style.display = (CS === 's-home' || CS === 's-auth') ? 'none' : 'flex';
+  // Ask and Answer screens have their own input toolbar sitting in the same
+  // bottom zone these floating buttons use — showing both caused the home
+  // button to sit on top of the new + (attach) button. Both screens already
+  // have quick access back to Home via the standard bottom nav, so hiding
+  // the floating buttons there removes the overlap without losing any real
+  // navigation ability.
+  var suppressOnThisScreen = (CS === 's-ask' || CS === 's-answer');
+  if(fb) fb.style.display = (FORWARD_HIST.length && !suppressOnThisScreen) ? 'flex' : 'none';
+  if(hb) hb.style.display = (CS === 's-home' || CS === 's-auth' || suppressOnThisScreen) ? 'none' : 'flex';
 }
 function navBack(){
   if(SCREEN_HIST.length > 1){
@@ -8264,6 +8303,20 @@ function detectMentionedService(text){
     if(lower.indexOf(SERVICE_NAME_INDEX[i].nameLower) !== -1) return SERVICE_NAME_INDEX[i];
   }
   return null;
+}
+
+// Recognizes when the user is asking about the app ITSELF — "what is your
+// name", "who are you", "what is lifedesk", or just mentioning "lifedesk"
+// on its own. When this fires, any currently-locked service persona (e.g.
+// being stuck mid-way through "Growth Strategist") gets cleared so the AI
+// can actually answer the identity question directly, instead of trying to
+// redirect back to whatever it was doing before.
+function detectAppIdentityQuestion(text){
+  if(!text) return false;
+  var lower = text.toLowerCase().trim();
+  var identityQuestion = /\b(what('s| is) your name|who are you|what are you|what('s| is) lifedesk|tell me about lifedesk)\b/.test(lower);
+  var bareNameMention = /^life\s?desk\b/.test(lower) && lower.length < 30;
+  return identityQuestion || bareNameMention;
 }
 
 // ── DEEP LINKING ─────────────────────────────────────────────

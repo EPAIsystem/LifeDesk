@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v61 — added real app shortcuts (Settings, Ask) to manifest.json, with actual working navigation behind them, so PWABuilder's "Settings shortcut" toggle does something real instead of opening a broken/generic page
-const CACHE = 'lifedesk-v61';
+// LifeDesk Service Worker v63 — added a direct "Share LifeDesk" option in Profile settings, since going fullscreen/native (via assetlinks.json) correctly removed the browser's own 3-dot share menu, but nothing replaced it — the app now has its own share entry point using the native share sheet
+const CACHE = 'lifedesk-v63';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
