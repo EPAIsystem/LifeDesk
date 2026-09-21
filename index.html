@@ -8280,11 +8280,14 @@ var PENDING_DEEPLINK = (function(){
     var params = new URLSearchParams(window.location.search);
     var serviceSlug = params.get('service');
     var verticalCode = params.get('v');
+    var screenName = params.get('screen');
     if(serviceSlug) {
       var match = SERVICE_NAME_INDEX.find(function(s){ return s.slug === serviceSlug; });
       if(match) return { type:'service', slug: serviceSlug };
     }
     if(verticalCode && VD[verticalCode]) return { type:'vertical', vertical: verticalCode };
+    if(screenName === 'profile') return { type:'screen', screen: 's-profile' };
+    if(screenName === 'ask') return { type:'screen', screen: 's-ask' };
   } catch(e) {}
   return null;
 })();
@@ -8293,6 +8296,10 @@ function applyPendingDeepLink(){
   if(!PENDING_DEEPLINK) return false;
   var link = PENDING_DEEPLINK;
   PENDING_DEEPLINK = null;
+  if(link.type === 'screen') {
+    showScreen(link.screen);
+    return true;
+  }
   if(link.type === 'service') {
     var match = SERVICE_NAME_INDEX.find(function(s){ return s.slug === link.slug; });
     if(!match) return false;

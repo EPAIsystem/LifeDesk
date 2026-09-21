@@ -33,5 +33,21 @@
   ],
   "categories": ["productivity", "education", "lifestyle"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "description": "Open your LifeDesk profile and settings",
+      "url": "/?screen=profile",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ask a Question",
+      "short_name": "Ask",
+      "description": "Ask LifeDesk anything, right away",
+      "url": "/?screen=ask",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }

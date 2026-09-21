@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v60 — MAJOR: added file upload (PDF/Word/text) alongside photos, both now collapse behind a "+" button matching standard messaging-app UX (only mic/send stay visible by default); added a real accessibility pass (keyboard reachability for clickable divs app-wide, focus-visible outlines, prefers-reduced-motion support, dynamic html lang); fresh hardcoded-content audit found no leftover placeholders, duplicate functions, or orphaned handlers
-const CACHE = 'lifedesk-v60';
+// LifeDesk Service Worker v61 — added real app shortcuts (Settings, Ask) to manifest.json, with actual working navigation behind them, so PWABuilder's "Settings shortcut" toggle does something real instead of opening a broken/generic page
+const CACHE = 'lifedesk-v61';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
