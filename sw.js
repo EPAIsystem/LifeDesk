@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v63 — added a direct "Share LifeDesk" option in Profile settings, since going fullscreen/native (via assetlinks.json) correctly removed the browser's own 3-dot share menu, but nothing replaced it — the app now has its own share entry point using the native share sheet
-const CACHE = 'lifedesk-v63';
+// LifeDesk Service Worker v64 — fixed offline-question UX: new questions now check navigator.onLine upfront and show an honest, helpful message ("new questions need internet, saved answers still work") instead of a confusing generic server error; corrected "works offline" marketing claims (SEO description, social preview, landing page) to accurately say "review saved answers offline" — no AI app can generate genuinely new answers without a server connection
+const CACHE = 'lifedesk-v64';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="LifeDesk">
-  <meta name="description" content="LifeDesk is an AI life advisor covering farming, health, education, business, faith, finance, legal and family — 20 life areas in one app. Works offline, speaks 32 languages, and adapts advice to your country.">
+  <meta name="description" content="LifeDesk is an AI life advisor covering farming, health, education, business, faith, finance, legal and family — 20 life areas in one app. Review saved answers offline, speaks 32 languages, and adapts advice to your country.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>LifeDesk — AI Life Advisor for Farming, Health, Business, Faith & More</title>
@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LifeDesk">
 <meta property="og:title" content="LifeDesk — Your AI Advisor for Everyday Life">
-<meta property="og:description" content="Farming tips, daily devotionals, homework help, business and finance advice — one AI app, 20 life areas, 32 languages, works offline. Free to try.">
+<meta property="og:description" content="Farming tips, daily devotionals, homework help, business and finance advice — one AI app, 20 life areas, 32 languages, review saved answers offline. Free to try.">
 <meta property="og:url" content="https://livedesk-ai.netlify.app/">
 <meta property="og:image" content="https://livedesk-ai.netlify.app/icon-512.png">
 
@@ -1200,7 +1200,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
        big part of why search engines had no content to index. -->
   <section style="max-width:520px;margin:28px auto 0;padding:0 20px 30px;color:#57534E;font-size:13px;line-height:1.7;text-align:left;">
     <h1 style="font-size:16px;font-weight:800;color:#1C1917;margin-bottom:6px;">LifeDesk — Your AI Advisor for Everyday Life</h1>
-    <p>LifeDesk brings farming guidance, daily devotionals, homework help, business advice, health and finance guidance, and more into one AI app — free to try, works offline, and speaks 32 languages.</p>
+    <p>LifeDesk brings farming guidance, daily devotionals, homework help, business advice, health and finance guidance, and more into one AI app — free to try, review your saved answers offline, and speaks 32 languages.</p>
     <h2 style="font-size:13px;font-weight:800;color:#1C1917;margin:14px 0 4px;">20 life areas, one app</h2>
     <p>Farming &amp; Agriculture · Faith &amp; Devotionals · Health &amp; Wellness · Education &amp; Study Help · Business &amp; Entrepreneurship · Personal Finance · Legal Guidance · Family &amp; Parenting · Kids Desk · and more — each tailored to your own country and language.</p>
   </section>
@@ -3338,6 +3338,10 @@ function consumeAskStreamFully(requestBody) {
 
 function sendQuestion(){
   var txt=g('ask-input').value.trim();if(!txt)return;
+  if(!navigator.onLine){
+    showOfflineNewQuestionNotice();
+    return;
+  }
   LAST_Q=txt;
   g('ask-input').value='';
   if(detectAppIdentityQuestion(txt)){
@@ -3417,6 +3421,10 @@ function sendQuestion(){
 // SEND FOLLOW UP
 function sendFollowUp(){
   var txt=g('followup-input').value.trim();if(!txt)return;
+  if(!navigator.onLine){
+    showOfflineNewQuestionNotice();
+    return;
+  }
   g('followup-input').value='';
   if(detectAppIdentityQuestion(txt)){
     CURRENT_SERVICE = null;
@@ -4994,6 +5002,10 @@ renderAnswer = function(txt, d, used) {
 // ═══════════════════════════════════════════════════════
 
 // ── OFFLINE DETECTION ────────────────────────────────────
+function showOfflineNewQuestionNotice(){
+  showToast('📡 You\'re offline — new questions need internet. Your saved answers are still available in History.');
+}
+
 function updateOnlineStatus() {
   var banner = document.getElementById('offline-banner');
   if(!banner) return;
