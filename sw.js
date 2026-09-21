@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v59 — real VAPID key wired in, push notifications now fully activated end to end
-const CACHE = 'lifedesk-v59';
+// LifeDesk Service Worker v60 — MAJOR: added file upload (PDF/Word/text) alongside photos, both now collapse behind a "+" button matching standard messaging-app UX (only mic/send stay visible by default); added a real accessibility pass (keyboard reachability for clickable divs app-wide, focus-visible outlines, prefers-reduced-motion support, dynamic html lang); fresh hardcoded-content audit found no leftover placeholders, duplicate functions, or orphaned handlers
+const CACHE = 'lifedesk-v60';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

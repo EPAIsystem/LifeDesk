@@ -990,6 +990,23 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
   height: 100%;
   object-fit: cover;
 }
+/* ── ACCESSIBILITY ── */
+/* Safety-net focus indicator for any interactive element (including the
+   keyboard-enhanced clickable divs above) that doesn't already have its own
+   dedicated :focus style — keyboard/switch-access users need to be able to
+   SEE where focus currently is. */
+:focus-visible{outline:2px solid var(--gn);outline-offset:2px;}
+/* Respect the OS-level "reduce motion" accessibility preference — spinners,
+   typing indicators, and transitions become instant/minimal instead of
+   animated for anyone who has this turned on. */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
 </style>
 
   <!-- Service Worker Registration (production only) -->
@@ -1542,20 +1559,33 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 <div class="inp-row" style="flex-direction:column;align-items:stretch;">
   <div style="display:flex;align-items:center;gap:6px;padding:0 0 8px;">
   <div class="mode-toggle" id="mode-toggle" style="margin:0;flex-shrink:0;">
-    <button class="mode-btn active" id="mode-quick" onclick="setQuickDeepMode('quick')">⚡</button>
-    <button class="mode-btn" id="mode-deep" onclick="setQuickDeepMode('deep')">🧠</button>
+    <button class="mode-btn active" id="mode-quick" onclick="setQuickDeepMode('quick')" aria-label="Quick mode" aria-pressed="true">⚡</button>
+    <button class="mode-btn" id="mode-deep" onclick="setQuickDeepMode('deep')" aria-label="Deep mode" aria-pressed="false">🧠</button>
   </div>
   <div class="mode-indicator" id="mode-indicator" style="margin:0;font-size:11px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><span>Quick</span> · Haiku</div>
-  <!-- Camera button -->
-  <label for="img-upload" style="cursor:pointer;font-size:20px;line-height:1;flex-shrink:0;" title="Upload photo">📷</label>
-  <input type="file" id="img-upload" accept="image/*" capture="environment" style="display:none;" onchange="handleImageUpload(event)">
 </div>
-<img id="img-preview" class="img-preview" alt="Uploaded image">
-<button id="img-clear" class="img-clear" onclick="clearImage()">✕ Remove photo</button>
+<div id="attach-panel" style="display:none;gap:14px;padding:4px 4px 10px;align-items:center;">
+  <label for="img-upload" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;" aria-label="Take or upload a photo">
+    <span style="font-size:22px;" aria-hidden="true">📷</span><span style="font-size:9px;color:var(--t3);">Photo</span>
+  </label>
+  <input type="file" id="img-upload" accept="image/*" capture="environment" style="display:none;" onchange="handleImageUpload(event)" aria-label="Photo file input">
+  <label for="doc-upload" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;" aria-label="Upload a document">
+    <span style="font-size:22px;" aria-hidden="true">📎</span><span style="font-size:9px;color:var(--t3);">File</span>
+  </label>
+  <input type="file" id="doc-upload" accept=".pdf,.txt,.csv,.md,.doc,.docx" style="display:none;" onchange="handleDocUpload(event)" aria-label="Document file input">
+</div>
+<img id="img-preview" class="img-preview" alt="Uploaded image preview">
+<button id="img-clear" class="img-clear" onclick="clearImage()" aria-label="Remove uploaded photo">✕ Remove photo</button>
+<div id="doc-preview-row" style="display:none;align-items:center;gap:8px;background:var(--sf2);border-radius:10px;padding:8px 12px;margin-bottom:8px;">
+  <span style="font-size:16px;" aria-hidden="true">📄</span>
+  <span id="doc-preview-name" style="font-size:12px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+  <button onclick="clearDoc()" style="background:none;border:none;font-size:14px;cursor:pointer;color:var(--t3);" aria-label="Remove uploaded file">✕</button>
+</div>
 <div style="display:flex;gap:9px;align-items:flex-end;">
-<textarea class="inp" rows="2" placeholder="Type, speak or upload a photo of your question…" id="ask-input" style="min-height:52px;flex:1;"></textarea>
-  <button class="mic-btn" id="mic-ask" onclick="startSTT('ask-input')" title="Speak">🎤</button>
-  <button class="send-btn" onclick="sendQuestion()">➤</button>
+  <button onclick="toggleAttachPanel()" id="attach-toggle-btn" style="width:38px;height:38px;border-radius:50%;background:var(--sf2);border:1.5px solid var(--bd);font-size:18px;font-weight:700;color:var(--tx);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;" aria-label="Add a photo or file" aria-expanded="false">+</button>
+  <textarea class="inp" rows="2" placeholder="Type, speak or add a photo/file…" id="ask-input" style="min-height:52px;flex:1;" aria-label="Ask a question"></textarea>
+  <button class="mic-btn" id="mic-ask" onclick="startSTT('ask-input')" title="Speak" aria-label="Speak your question">🎤</button>
+  <button class="send-btn" onclick="sendQuestion()" aria-label="Send question">➤</button>
 </div>
 </div>
 </div>
@@ -1577,14 +1607,28 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     </div>
   </div>
 </div>
-<img id="img-preview-followup" class="img-preview" alt="Uploaded image">
-<button id="img-clear-followup" class="img-clear" onclick="clearImageFollowup()">✕ Remove photo</button>
+<img id="img-preview-followup" class="img-preview" alt="Uploaded image preview">
+<button id="img-clear-followup" class="img-clear" onclick="clearImageFollowup()" aria-label="Remove uploaded photo">✕ Remove photo</button>
+<div id="doc-preview-row-followup" style="display:none;align-items:center;gap:8px;background:var(--sf2);border-radius:10px;padding:8px 12px;margin-bottom:8px;">
+  <span style="font-size:16px;" aria-hidden="true">📄</span>
+  <span id="doc-preview-name-followup" style="font-size:12px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+  <button onclick="clearDocFollowup()" style="background:none;border:none;font-size:14px;cursor:pointer;color:var(--t3);" aria-label="Remove uploaded file">✕</button>
+</div>
+<div id="attach-panel-followup" style="display:none;gap:14px;padding:4px 4px 10px;align-items:center;">
+  <label for="img-upload-followup" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;" aria-label="Take or upload a photo">
+    <span style="font-size:22px;" aria-hidden="true">📷</span><span style="font-size:9px;color:var(--t3);">Photo</span>
+  </label>
+  <input type="file" id="img-upload-followup" accept="image/*" capture="environment" style="display:none;" onchange="handleImageUploadFollowup(event)" aria-label="Photo file input">
+  <label for="doc-upload-followup" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;" aria-label="Upload a document">
+    <span style="font-size:22px;" aria-hidden="true">📎</span><span style="font-size:9px;color:var(--t3);">File</span>
+  </label>
+  <input type="file" id="doc-upload-followup" accept=".pdf,.txt,.csv,.md,.doc,.docx" style="display:none;" onchange="handleDocUploadFollowup(event)" aria-label="Document file input">
+</div>
 <div class="inp-row">
-  <label for="img-upload-followup" style="cursor:pointer;font-size:20px;line-height:1;flex-shrink:0;align-self:center;" title="Upload photo">📷</label>
-  <input type="file" id="img-upload-followup" accept="image/*" capture="environment" style="display:none;" onchange="handleImageUploadFollowup(event)">
-  <textarea class="inp" rows="1" placeholder="Ask a follow-up…" id="followup-input"></textarea>
-  <button class="mic-btn" id="mic-followup" onclick="startSTT('followup-input')" title="Speak">🎤</button>
-  <button class="send-btn" onclick="sendFollowUp()">➤</button>
+  <button onclick="toggleAttachPanel('followup')" id="attach-toggle-btn-followup" style="width:38px;height:38px;border-radius:50%;background:var(--sf2);border:1.5px solid var(--bd);font-size:18px;font-weight:700;color:var(--tx);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;align-self:center;" aria-label="Add a photo or file" aria-expanded="false">+</button>
+  <textarea class="inp" rows="1" placeholder="Ask a follow-up…" id="followup-input" aria-label="Ask a follow-up question"></textarea>
+  <button class="mic-btn" id="mic-followup" onclick="startSTT('followup-input')" title="Speak" aria-label="Speak your follow-up">🎤</button>
+  <button class="send-btn" onclick="sendFollowUp()" aria-label="Send follow-up">➤</button>
 </div>
 </div>
 
@@ -2468,6 +2512,31 @@ var messaging = null;
 try { if(firebase.messaging.isSupported && firebase.messaging.isSupported()) messaging = firebase.messaging(); } catch(e) { console.warn('Messaging not supported:', e); }
 var CU=null,UP=null,CS='s-auth',CV='farming',CH=[],SP='standard',SV=['farming','education'],SF='bible',OS=0;
 function g(id){return document.getElementById(id);}
+// ── ACCESSIBILITY: KEYBOARD REACHABILITY FOR CLICKABLE DIVS ──
+// Many interactive elements in this app are <div onclick="..."> rather than
+// real <button>/<a> elements, which means a keyboard-only or switch-access
+// user can't Tab to them or activate them at all — a real, significant gap.
+// Rather than manually retrofitting every one of these across the app,
+// this scans for them and adds proper tabindex/role/keyboard activation
+// automatically. Runs after every screen change, since most content is
+// rendered dynamically.
+function enhanceKeyboardAccessibility(){
+  var selector = '.vc, .rec-item, .hist-item, .feat-card, .sidebar-item, .service-card, .act-pill, [onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label)';
+  document.querySelectorAll(selector).forEach(function(el){
+    if(el.getAttribute('data-a11y-enhanced')) return;
+    if(!el.getAttribute('onclick')) return;
+    el.setAttribute('tabindex', '0');
+    if(!el.getAttribute('role')) el.setAttribute('role', 'button');
+    el.setAttribute('data-a11y-enhanced', '1');
+    el.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        el.click();
+      }
+    });
+  });
+}
+
 function showScreen(id, fromNav) {
   // Core: swap active screen
   var prev = document.getElementById(CS);
@@ -2506,6 +2575,7 @@ function showScreen(id, fromNav) {
   }
   if(id === 's-plans')     renderPlanCards();
   if(id === 's-community') { renderCommFilters(); loadCommunityQuestions(); }
+  setTimeout(enhanceKeyboardAccessibility, 100);
 }
 function showLoading(t){g('lov').classList.remove('hidden');g('lov-txt').textContent=t||'Loading...';}
 function hideLoading(){g('lov').classList.add('hidden');}
@@ -3293,7 +3363,12 @@ function sendQuestion(){
   g('live-txt').textContent=d.ns?'Searching for current data...':'Thinking...';
   g('live-dot').style.animationPlayState='running';
   showScreen('s-answer');showSteps(d.ns);
-  CH.push({role:'user',content:txt});
+  var apiTxt = txt;
+  if(CURRENT_DOC_TEXT){
+    apiTxt = 'The user attached a file named "' + CURRENT_DOC_NAME + '" with this content:\n\n---\n' + CURRENT_DOC_TEXT + '\n---\n\nTheir question: ' + txt;
+    clearDoc();
+  }
+  CH.push({role:'user',content:apiTxt});
   var tools=wantsLiveSearch(d)?[{type:'web_search_20250305',name:'web_search'}]:[];
   var streamStarted = false;
   streamAskRequest(
@@ -3343,7 +3418,12 @@ function sendFollowUp(){
   wrap.innerHTML='<div class="aav">🌿</div><div class="abub" id="'+fuId+'"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
   body.appendChild(wrap);body.scrollTop=body.scrollHeight;
   g('live-txt').textContent='Searching for follow-up...';
-  CH.push({role:'user',content:txt});
+  var apiTxt = txt;
+  if(CURRENT_DOC_TEXT_FOLLOWUP){
+    apiTxt = 'The user attached a file named "' + CURRENT_DOC_NAME_FOLLOWUP + '" with this content:\n\n---\n' + CURRENT_DOC_TEXT_FOLLOWUP + '\n---\n\nTheir question: ' + txt;
+    clearDocFollowup();
+  }
+  CH.push({role:'user',content:apiTxt});
   // Short continuation-style replies ("Piece 2", "Next", "continue", etc.)
   // don't need fresh web research — the context is already established
   // earlier in the conversation. Triggering a new live-search tool-use
@@ -5598,6 +5678,7 @@ function selectLang(code) {
   if(!lang) return;
   CUR_LANG = lang;
   applyUITranslations();
+  try { document.documentElement.setAttribute('lang', code); } catch(e){}
   // Update STT language
   if(window.STT_recognition) { try { STT_recognition.lang = lang.sttCode; } catch(e){} }
   // Update settings display
@@ -7063,6 +7144,130 @@ function handleImageUpload(event) {
   reader.readAsDataURL(file);
 }
 
+// ── ATTACH PANEL (collapsible + button) ──────────────────
+function toggleAttachPanel(which){
+  var suffix = which === 'followup' ? '-followup' : '';
+  var panel = document.getElementById('attach-panel' + suffix);
+  var btn = document.getElementById('attach-toggle-btn' + suffix);
+  if(!panel) return;
+  var isOpen = panel.style.display === 'flex';
+  panel.style.display = isOpen ? 'none' : 'flex';
+  if(btn){
+    btn.textContent = isOpen ? '+' : '×';
+    btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+  }
+}
+
+// ── DOCUMENT UPLOAD & TEXT EXTRACTION ────────────────────
+var CURRENT_DOC_TEXT = null;
+var CURRENT_DOC_NAME = null;
+var CURRENT_DOC_TEXT_FOLLOWUP = null;
+var CURRENT_DOC_NAME_FOLLOWUP = null;
+
+function extractTextFromFile(file, onDone, onError){
+  var name = file.name.toLowerCase();
+  if(name.endsWith('.txt') || name.endsWith('.csv') || name.endsWith('.md')){
+    var reader = new FileReader();
+    reader.onload = function(e){ onDone(e.target.result); };
+    reader.onerror = function(){ onError('Could not read file.'); };
+    reader.readAsText(file);
+    return;
+  }
+  if(name.endsWith('.pdf')){
+    showToast('Reading PDF...');
+    loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', function(){
+      try{
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        var reader = new FileReader();
+        reader.onload = function(e){
+          window.pdfjsLib.getDocument({data: e.target.result}).promise.then(function(pdf){
+            var pages = [];
+            var pagePromises = [];
+            for(var i=1;i<=pdf.numPages;i++){
+              pagePromises.push(pdf.getPage(i).then(function(page){
+                return page.getTextContent().then(function(tc){
+                  return tc.items.map(function(it){ return it.str; }).join(' ');
+                });
+              }));
+            }
+            Promise.all(pagePromises).then(function(texts){ onDone(texts.join('\n\n')); });
+          }).catch(function(){ onError('Could not read this PDF.'); });
+        };
+        reader.readAsArrayBuffer(file);
+      }catch(e){ onError('Could not read this PDF.'); }
+    }, function(){ onError('Could not load PDF reader.'); });
+    return;
+  }
+  if(name.endsWith('.doc') || name.endsWith('.docx')){
+    showToast('Reading document...');
+    loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', function(){
+      try{
+        var reader = new FileReader();
+        reader.onload = function(e){
+          window.mammoth.extractRawText({arrayBuffer: e.target.result}).then(function(result){
+            onDone(result.value);
+          }).catch(function(){ onError('Could not read this Word document.'); });
+        };
+        reader.readAsArrayBuffer(file);
+      }catch(e){ onError('Could not read this Word document.'); }
+    }, function(){ onError('Could not load document reader.'); });
+    return;
+  }
+  onError('Unsupported file type. Try PDF, Word, or a plain text file.');
+}
+
+function loadScriptOnce(src, onLoad, onError){
+  if(document.querySelector('script[src="'+src+'"]')){ onLoad(); return; }
+  var s = document.createElement('script');
+  s.src = src;
+  s.onload = onLoad;
+  s.onerror = onError;
+  document.head.appendChild(s);
+}
+
+function handleDocUpload(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  if(file.size > 10*1024*1024){ showToast('File too large. Max 10MB.'); return; }
+  extractTextFromFile(file, function(text){
+    CURRENT_DOC_TEXT = text.substring(0, 30000); // keep the request reasonably sized
+    CURRENT_DOC_NAME = file.name;
+    var row = document.getElementById('doc-preview-row');
+    var nameEl = document.getElementById('doc-preview-name');
+    if(row) row.style.display = 'flex';
+    if(nameEl) nameEl.textContent = file.name;
+    showToast('📄 File ready — type your question and send');
+  }, function(errMsg){ showToast(errMsg); });
+}
+function clearDoc(){
+  CURRENT_DOC_TEXT = null; CURRENT_DOC_NAME = null;
+  var row = document.getElementById('doc-preview-row');
+  if(row) row.style.display = 'none';
+  var input = document.getElementById('doc-upload');
+  if(input) input.value = '';
+}
+function handleDocUploadFollowup(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  if(file.size > 10*1024*1024){ showToast('File too large. Max 10MB.'); return; }
+  extractTextFromFile(file, function(text){
+    CURRENT_DOC_TEXT_FOLLOWUP = text.substring(0, 30000);
+    CURRENT_DOC_NAME_FOLLOWUP = file.name;
+    var row = document.getElementById('doc-preview-row-followup');
+    var nameEl = document.getElementById('doc-preview-name-followup');
+    if(row) row.style.display = 'flex';
+    if(nameEl) nameEl.textContent = file.name;
+    showToast('📄 File ready — type your follow-up and send');
+  }, function(errMsg){ showToast(errMsg); });
+}
+function clearDocFollowup(){
+  CURRENT_DOC_TEXT_FOLLOWUP = null; CURRENT_DOC_NAME_FOLLOWUP = null;
+  var row = document.getElementById('doc-preview-row-followup');
+  if(row) row.style.display = 'none';
+  var input = document.getElementById('doc-upload-followup');
+  if(input) input.value = '';
+}
+
 function clearImage() {
   CURRENT_IMAGE_BASE64 = null;
   CURRENT_IMAGE_TYPE = null;
@@ -8274,6 +8479,7 @@ document.addEventListener('DOMContentLoaded', function() {
         el.setAttribute('onclick', 'openVerticalIntro(\'' + match[1] + '\')');
       }
     });
+    enhanceKeyboardAccessibility();
   }, 600);
 });
 
