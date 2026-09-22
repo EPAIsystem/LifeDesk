@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v67 — fixed the Forward navigation button being completely unusable on Ask/Answer screens (an earlier fix hiding it there to avoid overlapping the new + attach button went too far — unlike Home, Forward has no equivalent in the bottom nav, so it needed to stay visible, just lifted above the toolbar instead of hidden entirely)
-const CACHE = 'lifedesk-v67';
+// LifeDesk Service Worker v68 — added a batch "Grant Free Premium" tool to the Admin Dashboard: paste a list of tester emails, pick a duration, and grant everyone free Premium in one tap — reuses the existing safe renewal-expiry system so access ends automatically, no manual Firestore editing needed anymore
+const CACHE = 'lifedesk-v68';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

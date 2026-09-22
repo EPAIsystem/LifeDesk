@@ -27,6 +27,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/grant-premium"
+  to = "/.netlify/functions/grant-premium"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

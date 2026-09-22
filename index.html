@@ -1782,7 +1782,23 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div id="as-bycountry" style="margin-bottom:16px;"></div>
     <div class="prayer-section-lbl">Users by Region (Top 10)</div>
     <div id="as-byregion" style="margin-bottom:16px;"></div>
-    <div style="font-size:11px;color:#9CA3AF;line-height:1.6;">Paid = plan not equal to Free with an unexpired planExpiry. Failed Renewals = users whose last renewal attempt failed and were moved back to Free. Location breakdown shows counts only — never tied to any individual user's identity.</div>
+    <div style="font-size:11px;color:#9CA3AF;line-height:1.6;margin-bottom:20px;">Paid = plan not equal to Free with an unexpired planExpiry. Failed Renewals = users whose last renewal attempt failed and were moved back to Free. Location breakdown shows counts only — never tied to any individual user's identity.</div>
+
+    <div class="prayer-section-lbl">Grant Free Premium (Testers, etc.)</div>
+    <div style="font-size:11px;color:#9CA3AF;line-height:1.6;margin-bottom:10px;">Paste one email per line. Each must already have a LifeDesk account (signed up at least once) — emails with no matching account will be listed as "not found" so you know to ask them to sign up first, then grant again.</div>
+    <textarea id="grant-emails" rows="5" placeholder="tester1@gmail.com&#10;tester2@gmail.com&#10;tester3@gmail.com" style="width:100%;border:1.5px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;margin-bottom:10px;resize:vertical;"></textarea>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <div style="flex:1;">
+        <label style="font-size:11px;color:#9CA3AF;display:block;margin-bottom:4px;">Duration (months)</label>
+        <input type="number" id="grant-duration" value="3" min="1" max="24" style="width:100%;border:1.5px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:13px;box-sizing:border-box;">
+      </div>
+      <div style="flex:2;">
+        <label style="font-size:11px;color:#9CA3AF;display:block;margin-bottom:4px;">Label (for your own reference)</label>
+        <input type="text" id="grant-label" value="Closed Testing" style="width:100%;border:1.5px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:13px;box-sizing:border-box;">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="grantPremiumBatch()" id="grant-premium-btn" style="width:100%;margin-bottom:10px;">Grant Free Premium</button>
+    <div id="grant-premium-result" style="font-size:12px;line-height:1.7;"></div>
   </div>
   <div id="admin-stats-error" style="display:none;text-align:center;padding:40px 20px;color:#B91C1C;font-size:13px;"></div>
 </div>
@@ -6207,6 +6223,44 @@ startSTT = function(targetId) {
 // ── ADMIN / TEAM WHITELIST ───────────────────────────────
 // Add emails to the 'admins' collection in Firestore to grant free Premium
 // Document ID = user's email address, field: { role: 'admin' | 'team' | 'collaborator' }
+function grantPremiumBatch() {
+  var emailsRaw = g('grant-emails').value.trim();
+  var duration = parseInt(g('grant-duration').value, 10);
+  var label = g('grant-label').value.trim() || 'Tester grant';
+  var resultEl = g('grant-premium-result');
+  var btn = g('grant-premium-btn');
+  if(!emailsRaw){ showToast('Paste at least one email first'); return; }
+  var emails = emailsRaw.split('\n').map(function(e){ return e.trim(); }).filter(Boolean);
+  if(!duration || duration < 1 || duration > 24){ showToast('Duration must be 1-24 months'); return; }
+  btn.disabled = true;
+  btn.textContent = 'Granting...';
+  resultEl.innerHTML = '';
+  CU.getIdToken().then(function(idToken){
+    return fetch('/api/grant-premium', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ emails: emails, durationMonths: duration, label: label })
+    });
+  }).then(function(r){ return r.json(); }).then(function(data){
+    btn.disabled = false;
+    btn.textContent = 'Grant Free Premium';
+    if(data.error){ resultEl.innerHTML = '<div style="color:#B91C1C;">Error: '+data.error.message+'</div>'; return; }
+    var html = '<div style="color:#1E6B45;font-weight:700;">✅ Granted to '+data.granted.length+' account(s), expires '+data.expiresOn+'</div>';
+    if(data.notFound && data.notFound.length){
+      html += '<div style="color:#B45309;margin-top:6px;">⚠ Not found (no account yet — ask them to sign up, then grant again):<br>'+data.notFound.join(', ')+'</div>';
+    }
+    if(data.failed && data.failed.length){
+      html += '<div style="color:#B91C1C;margin-top:6px;">✗ Failed: '+data.failed.join(', ')+'</div>';
+    }
+    resultEl.innerHTML = html;
+    if(data.granted.length) g('grant-emails').value = '';
+  }).catch(function(e){
+    btn.disabled = false;
+    btn.textContent = 'Grant Free Premium';
+    resultEl.innerHTML = '<div style="color:#B91C1C;">Could not reach the server. Try again.</div>';
+  });
+}
+
 function loadAdminStats() {
   if(!CU) return;
   var loadingEl = document.getElementById('admin-stats-loading');
