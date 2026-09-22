@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v64 — fixed offline-question UX: new questions now check navigator.onLine upfront and show an honest, helpful message ("new questions need internet, saved answers still work") instead of a confusing generic server error; corrected "works offline" marketing claims (SEO description, social preview, landing page) to accurately say "review saved answers offline" — no AI app can generate genuinely new answers without a server connection
-const CACHE = 'lifedesk-v64';
+// LifeDesk Service Worker v66 — added service cards to Relationships & Marriage (Courtship Advisor, Marriage Preparation Coach, Communication Coach, Conflict Resolution Guide, Compatibility Advisor, Faith-Based Relationship Guide) — all 20 verticals now have proper named services; removed the duplicate "Marriage Counsellor" from Home & Family, consolidating that topic under its dedicated vertical
+const CACHE = 'lifedesk-v66';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
