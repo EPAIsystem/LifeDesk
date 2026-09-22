@@ -32,6 +32,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/admin-moderate"
+  to = "/.netlify/functions/admin-moderate"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

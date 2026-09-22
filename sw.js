@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v68 — added a batch "Grant Free Premium" tool to the Admin Dashboard: paste a list of tester emails, pick a duration, and grant everyone free Premium in one tap — reuses the existing safe renewal-expiry system so access ends automatically, no manual Firestore editing needed anymore
-const CACHE = 'lifedesk-v68';
+// LifeDesk Service Worker v69 — MAJOR: built full block/report framework for Community Questions. Users can now block another user (their posts disappear immediately, permanently) and report a post with a reason. Reports go to an admin review queue in the Admin Dashboard, where a verified admin can remove the post or dismiss the report.
+const CACHE = 'lifedesk-v69';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

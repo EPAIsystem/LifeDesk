@@ -1798,7 +1798,10 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
       </div>
     </div>
     <button class="btn btn-primary" onclick="grantPremiumBatch()" id="grant-premium-btn" style="width:100%;margin-bottom:10px;">Grant Free Premium</button>
-    <div id="grant-premium-result" style="font-size:12px;line-height:1.7;"></div>
+    <div id="grant-premium-result" style="font-size:12px;line-height:1.7;margin-bottom:20px;"></div>
+
+    <div class="prayer-section-lbl">Community Reports</div>
+    <div id="admin-reports-list" style="margin-bottom:16px;font-size:12px;color:#9CA3AF;">Loading...</div>
   </div>
   <div id="admin-stats-error" style="display:none;text-align:center;padding:40px 20px;color:#B91C1C;font-size:13px;"></div>
 </div>
@@ -2409,6 +2412,30 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
 
 <!-- ===== SAVE ANSWERS ON DEVICE MODAL ===== -->
 <!-- ===== NOTIFICATIONS MODAL ===== -->
+<!-- ===== COMMUNITY MODERATION MODAL (block/report) ===== -->
+<div class='settings-modal' id='comm-mod-modal' style='display:none;' onclick='if(event.target===this)closeModal("comm-mod-modal")'>
+<div class='settings-sheet'>
+  <div class='settings-sheet-hdr'>
+    <span class='settings-sheet-title' id='comm-mod-title'>Options</span>
+    <button class='settings-sheet-close' onclick='closeModal("comm-mod-modal")'>&#x2715;</button>
+  </div>
+  <div class='settings-sheet-body'>
+    <div id='comm-mod-report-reasons' style='display:none;'>
+      <div style='font-size:13px;color:#6B7280;margin-bottom:12px;'>Why are you reporting this post?</div>
+      <div class='set-item' style='cursor:pointer;' onclick="submitCommReport('spam')">Spam or misleading</div>
+      <div class='set-item' style='cursor:pointer;' onclick="submitCommReport('harassment')">Harassment or hate</div>
+      <div class='set-item' style='cursor:pointer;' onclick="submitCommReport('sexual')">Sexual content</div>
+      <div class='set-item' style='cursor:pointer;' onclick="submitCommReport('violence')">Violence or dangerous content</div>
+      <div class='set-item' style='cursor:pointer;' onclick="submitCommReport('other')">Other</div>
+    </div>
+    <div id='comm-mod-main-options'>
+      <div class='set-item' style='cursor:pointer;' onclick="showCommReportReasons()"><div class='set-ico' style='background:#FEE2E2;'>&#9873;</div><span class='set-lbl'>Report this post</span></div>
+      <div class='set-item' style='cursor:pointer;' onclick="blockCommUser()"><div class='set-ico' style='background:#FEE2E2;'>&#128683;</div><span class='set-lbl'>Block <span id='comm-mod-username'></span></span></div>
+    </div>
+  </div>
+</div>
+</div>
+
 <div class='settings-modal' id='notifications-modal' style='display:none;' onclick='if(event.target===this)closeModal("notifications-modal")'>
 <div class='settings-sheet'>
   <div class='settings-sheet-hdr'>
@@ -6223,6 +6250,43 @@ startSTT = function(targetId) {
 // ── ADMIN / TEAM WHITELIST ───────────────────────────────
 // Add emails to the 'admins' collection in Firestore to grant free Premium
 // Document ID = user's email address, field: { role: 'admin' | 'team' | 'collaborator' }
+function loadAdminReports(){
+  if(!CU) return;
+  var el = g('admin-reports-list');
+  if(!el) return;
+  CU.getIdToken().then(function(idToken){
+    return fetch('/api/admin-moderate', { headers: { 'Authorization': 'Bearer ' + idToken } });
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if(data.error){ el.innerHTML = '<div style="color:#B91C1C;">'+data.error.message+'</div>'; return; }
+    if(!data.reports || !data.reports.length){
+      el.innerHTML = '<div style="color:#9CA3AF;font-size:12px;">No pending reports. 🎉</div>';
+      return;
+    }
+    el.innerHTML = data.reports.map(function(r){
+      return '<div style="background:var(--sf);border-radius:10px;padding:12px;margin-bottom:8px;">'
+        +'<div style="font-size:11px;color:#B45309;font-weight:700;text-transform:uppercase;margin-bottom:4px;">'+r.reason+'</div>'
+        +'<div style="font-size:13px;margin-bottom:10px;">'+escHTML(r.questionText)+'</div>'
+        +'<div style="display:flex;gap:8px;">'
+          +'<button onclick="moderateReport(\''+r.id+'\',\''+r.questionId+'\',\'remove_post\')" style="flex:1;background:#B91C1C;color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;">Remove Post</button>'
+          +'<button onclick="moderateReport(\''+r.id+'\',\''+r.questionId+'\',\'dismiss\')" style="flex:1;background:var(--bd);color:var(--tx);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;">Dismiss</button>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+  }).catch(function(){ el.innerHTML = '<div style="color:#B91C1C;">Could not load reports.</div>'; });
+}
+function moderateReport(reportId, questionId, action){
+  CU.getIdToken().then(function(idToken){
+    return fetch('/api/admin-moderate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ reportId: reportId, questionId: questionId, action: action })
+    });
+  }).then(function(r){ return r.json(); }).then(function(){
+    showToast(action === 'remove_post' ? 'Post removed' : 'Report dismissed');
+    loadAdminReports();
+  }).catch(function(){ showToast('Could not update report. Try again.'); });
+}
+
 function grantPremiumBatch() {
   var emailsRaw = g('grant-emails').value.trim();
   var duration = parseInt(g('grant-duration').value, 10);
@@ -6269,6 +6333,7 @@ function loadAdminStats() {
   if(loadingEl) loadingEl.style.display = 'block';
   if(bodyEl) bodyEl.style.display = 'none';
   if(errEl) errEl.style.display = 'none';
+  loadAdminReports();
 
   CU.getIdToken().then(function(idToken){
     return fetch('/api/admin-stats', { headers: { 'Authorization': 'Bearer ' + idToken } });
@@ -6880,19 +6945,22 @@ function loadCommunityQuestions() {
   if(COMM_FILTER !== 'general') {
     query = query.where('vertical','==',COMM_FILTER);
   }
+  var blockedUsers = (UP && UP.blockedUsers) || [];
   query.orderBy('votes','desc').orderBy('timestamp','desc').limit(20).get()
     .then(function(snap) {
-      if(snap.empty) {
+      var visibleDocs = snap.docs.filter(function(doc){ return blockedUsers.indexOf(doc.data().userId) === -1; });
+      if(!visibleDocs.length) {
         el.innerHTML = '<div class="empty-box"><div class="ei">&#127760;</div>'
           +'<p style="font-size:13px;line-height:1.6;">No questions yet in this category.<br>Be the first to ask!</p></div>';
         return;
       }
       var html = '';
-      snap.forEach(function(doc) {
+      visibleDocs.forEach(function(doc) {
         var d = doc.data(); var id = doc.id;
         var ts = d.timestamp && d.timestamp.toDate ? d.timestamp.toDate() : new Date();
         var voted = CU && d.votedBy && d.votedBy.indexOf(CU.uid) !== -1;
         var vIcon = COMM_VERTICALS.find(function(v){return v.code===d.vertical;});
+        var isOwnPost = CU && d.userId === CU.uid;
         html += '<div class="comm-q-card">'
           +'<div class="comm-q-top">'
             +'<div class="comm-q-avatar">'+d.userInitial+'</div>'
@@ -6901,6 +6969,7 @@ function loadCommunityQuestions() {
                 +(vIcon?' <span style="font-size:11px;color:#9CA3AF;">· '+vIcon.icon+' '+vIcon.label+'</span>':'')+' </div>'
               +'<div class="comm-q-time">'+timeAgo(ts)+'</div>'
             +'</div>'
+            +(isOwnPost?'':'<div style="cursor:pointer;padding:4px 8px;font-size:16px;color:#9CA3AF;" onclick="openCommModMenu(\''+id+'\',\''+d.userId+'\',\''+escHTML(d.userName).replace(/'/g,"&#39;")+'\')" aria-label="More options">&#8942;</div>')
           +'</div>'
           +'<div class="comm-q-text">'+escHTML(d.question)+'</div>'
           +'<div class="comm-q-actions">'
@@ -6923,6 +6992,57 @@ function loadCommunityQuestions() {
         el.innerHTML = '<div class="empty-box">Error loading questions (' + (e.code||'unknown') + ')</div>';
       }
     });
+}
+
+// ── COMMUNITY MODERATION (block / report) ──────────────────
+var COMM_MOD_TARGET = null; // {questionId, userId, userName}
+function openCommModMenu(questionId, userId, userName){
+  COMM_MOD_TARGET = { questionId: questionId, userId: userId, userName: userName };
+  g('comm-mod-title').textContent = 'Options';
+  g('comm-mod-username').textContent = userName;
+  g('comm-mod-main-options').style.display = 'block';
+  g('comm-mod-report-reasons').style.display = 'none';
+  var el = document.getElementById('comm-mod-modal');
+  if(el) el.style.display = 'flex';
+}
+function showCommReportReasons(){
+  g('comm-mod-title').textContent = 'Report Post';
+  g('comm-mod-main-options').style.display = 'none';
+  g('comm-mod-report-reasons').style.display = 'block';
+}
+function submitCommReport(reason){
+  if(!COMM_MOD_TARGET || !CU) return;
+  db.collection('community_reports').add({
+    questionId: COMM_MOD_TARGET.questionId,
+    reportedUserId: COMM_MOD_TARGET.userId,
+    reporterUserId: CU.uid,
+    reason: reason,
+    status: 'pending',
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    closeModal('comm-mod-modal');
+    showToast('Report submitted. Thank you — we\'ll review this.');
+  }).catch(function(e){
+    console.error('Report failed:', e);
+    showToast('Could not submit report. Try again.');
+  });
+}
+function blockCommUser(){
+  if(!COMM_MOD_TARGET || !CU) return;
+  var target = COMM_MOD_TARGET;
+  db.collection('users').doc(CU.uid).update({
+    blockedUsers: firebase.firestore.FieldValue.arrayUnion(target.userId)
+  }).then(function(){
+    UP = UP || {};
+    UP.blockedUsers = UP.blockedUsers || [];
+    if(UP.blockedUsers.indexOf(target.userId) === -1) UP.blockedUsers.push(target.userId);
+    closeModal('comm-mod-modal');
+    showToast('Blocked ' + target.userName + ' — you won\'t see their posts anymore.');
+    loadCommunityQuestions();
+  }).catch(function(e){
+    console.error('Block failed:', e);
+    showToast('Could not block. Try again.');
+  });
 }
 
 function voteQuestion(id, alreadyVoted) {
