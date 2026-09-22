@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v69 — MAJOR: built full block/report framework for Community Questions. Users can now block another user (their posts disappear immediately, permanently) and report a post with a reason. Reports go to an admin review queue in the Admin Dashboard, where a verified admin can remove the post or dismiss the report.
-const CACHE = 'lifedesk-v69';
+// LifeDesk Service Worker v71 — expanded the image safety filter to properly cover drug/substance-related terms (cocaine, heroin, marijuana, syringes, etc.) — previously only had "drug use" and "overdose", missing the broader category this needed to genuinely cover
+const CACHE = 'lifedesk-v71';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

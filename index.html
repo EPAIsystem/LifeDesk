@@ -8787,6 +8787,29 @@ document.addEventListener('DOMContentLoaded', function() {
 // Wikimedia Commons, which is encyclopedic/historical and returned zero
 // results for natural-language queries like "interior decor for a 12x12
 // room". Falls back to Commons if Openverse has nothing.
+// Topics that should never trigger an external, unmoderated image search —
+// Openverse and Wikimedia Commons are open, real-world photo archives with
+// no content moderation of their own, so a search on these terms could
+// genuinely surface graphic or unsafe photography. Checked against the
+// extracted keywords before any search request is made.
+var UNSAFE_IMAGE_TERMS = [
+  'violence','violent','murder','kill','killing','war','warfare','combat','battle','massacre',
+  'gore','graphic','corpse','dead body','execution','torture','abuse','assault','rape',
+  'suicide','self harm','self-harm','gun','weapon','shooting','terrorist','terrorism',
+  'nude','naked','nudity','porn','sex','sexual','genitalia',
+  'blood','bloody','wound','injury graphic','mutilat','dismember',
+  'drug use','overdose','disaster victim','accident victim',
+  'cocaine','heroin','marijuana','cannabis','meth','methamphetamine','narcotic','narcotics',
+  'syringe','needle drug','opioid','ecstasy','lsd','crack cocaine','drug paraphernalia'
+];
+function containsUnsafeImageTerm(text){
+  var lower = (text||'').toLowerCase();
+  for(var i=0;i<UNSAFE_IMAGE_TERMS.length;i++){
+    if(lower.indexOf(UNSAFE_IMAGE_TERMS[i]) !== -1) return true;
+  }
+  return false;
+}
+
 function extractImageKeywords(topic) {
   var STOPWORDS = ['the','a','an','for','of','to','in','on','and','or','is','are','how','what','why','can','you','me','my','please','give','tell','about','with','this','that','best','ideas','idea','some','i','we','need','want','room','x'];
   return topic.toLowerCase()
@@ -8842,10 +8865,20 @@ function renderVisualiseResults(urls, searchQuery, btn) {
 
 function visualiseAnswer(topic) {
   var btn = document.querySelector('.visualise-btn');
+  if(containsUnsafeImageTerm(topic)){
+    if (btn) { btn.textContent = '🎨 Visualise'; btn.disabled = false; }
+    showToast('Images aren\'t available for this type of topic.');
+    return;
+  }
   if (btn) { btn.textContent = '🔍 Searching images...'; btn.disabled = true; }
 
   var searchQuery = topic.replace(/['"]/g,'').substring(0, 80);
   var keywords = extractImageKeywords(searchQuery) || searchQuery;
+  if(containsUnsafeImageTerm(keywords)){
+    if (btn) { btn.textContent = '🎨 Visualise'; btn.disabled = false; }
+    showToast('Images aren\'t available for this type of topic.');
+    return;
+  }
 
   fetchOpenverseImages(keywords).then(function(urls) {
     if (urls.length) { renderVisualiseResults(urls, searchQuery, btn); return; }
@@ -8867,7 +8900,11 @@ renderAnswer = function(text, d, isFollowup) {
     if (!ansBody) return;
     // Don't add if already present
     if (ansBody.querySelector('.visualise-btn')) return;
-    var topic = LAST_Q || (CURRENT_SERVICE ? CURRENT_SERVICE.name : 'this topic');
+    // Combine the question (context) with the actual answer content
+    // (specificity) — searching on the question alone was too generic to
+    // reliably return images that actually match what the answer covers.
+    var answerExcerpt = (text || '').replace(/[#*_`>\-\[\]()]/g, ' ').substring(0, 300);
+    var topic = ((LAST_Q || '') + ' ' + answerExcerpt).trim() || (CURRENT_SERVICE ? CURRENT_SERVICE.name : 'this topic');
     var btn = document.createElement('button');
     btn.className = 'visualise-btn';
     btn.innerHTML = '🎨 Visualise this';
