@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v66 — added service cards to Relationships & Marriage (Courtship Advisor, Marriage Preparation Coach, Communication Coach, Conflict Resolution Guide, Compatibility Advisor, Faith-Based Relationship Guide) — all 20 verticals now have proper named services; removed the duplicate "Marriage Counsellor" from Home & Family, consolidating that topic under its dedicated vertical
-const CACHE = 'lifedesk-v66';
+// LifeDesk Service Worker v67 — fixed the Forward navigation button being completely unusable on Ask/Answer screens (an earlier fix hiding it there to avoid overlapping the new + attach button went too far — unlike Home, Forward has no equivalent in the bottom nav, so it needed to stay visible, just lifted above the toolbar instead of hidden entirely)
+const CACHE = 'lifedesk-v67';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

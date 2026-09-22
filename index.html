@@ -5537,15 +5537,16 @@ function restoreLastScreenOrHome() {
 function updateNavButtons(){
   var fb = document.getElementById('global-fwd-btn');
   var hb = document.getElementById('global-home-btn');
-  // Ask and Answer screens have their own input toolbar sitting in the same
-  // bottom zone these floating buttons use — showing both caused the home
-  // button to sit on top of the new + (attach) button. Both screens already
-  // have quick access back to Home via the standard bottom nav, so hiding
-  // the floating buttons there removes the overlap without losing any real
-  // navigation ability.
-  var suppressOnThisScreen = (CS === 's-ask' || CS === 's-answer');
-  if(fb) fb.style.display = (FORWARD_HIST.length && !suppressOnThisScreen) ? 'flex' : 'none';
-  if(hb) hb.style.display = (CS === 's-home' || CS === 's-auth' || suppressOnThisScreen) ? 'none' : 'flex';
+  // Home is suppressed on Ask/Answer since the standard bottom nav already
+  // has its own Home tab there. Forward has no equivalent elsewhere, so it
+  // stays visible — just lifted clear of the taller input toolbar on those
+  // two screens instead of being hidden outright.
+  var hasOwnToolbar = (CS === 's-ask' || CS === 's-answer');
+  if(fb){
+    fb.style.display = FORWARD_HIST.length ? 'flex' : 'none';
+    fb.style.bottom = hasOwnToolbar ? '210px' : '88px';
+  }
+  if(hb) hb.style.display = (CS === 's-home' || CS === 's-auth' || hasOwnToolbar) ? 'none' : 'flex';
 }
 function navBack(){
   if(SCREEN_HIST.length > 1){
