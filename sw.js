@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v74 — fixed a real bug: openVertical() never cleared a leftover photo/document attachment, so an old upload from a previous, unrelated conversation could silently attach itself to a brand new text-only question, triggering the wrong code path (likely cause of the "Unexpected non-whitespace character after JSON" error seen on desktop). Also added a defensive safety net so no raw technical error message can ever reach a user's screen again, regardless of the underlying cause.
-const CACHE = 'lifedesk-v74';
+// LifeDesk Service Worker v76 — fixed the black bar still showing at top AND bottom after v75: switched from unreliable JS standalone-detection to a guaranteed CSS media query to hide the fake notch/status bar on any mobile-width screen, and added a JS-measured real window height as a fallback since some Android WebView versions don't reliably calculate 100vh/100dvh
+const CACHE = 'lifedesk-v76';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
