@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v72 — hid all 4 Kids Desk entry points (mode tab, Home quick action, Home banner, vertical picker tile) and softened Youth Zone's explicit "Ages 13-25" callout, to match the app's 18+ Play Store declaration for this launch — underlying code left intact, not deleted, for a proper compliant relaunch of Kids Desk as its own future project
-const CACHE = 'lifedesk-v72';
+// LifeDesk Service Worker v73 — fixed vertical headings being obscured on real device screenshots: a fake decorative phone "notch" (built for the desktop preview mockup) was never hidden on the installed app, unlike the fake status bar fixed earlier — it sat at very high z-index directly over real header content. Also strengthened standalone-mode detection (matchMedia alone can be unreliable in some Android TWA versions) and added safe-area-inset padding as defensive protection against any translucent system status bar.
+const CACHE = 'lifedesk-v73';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
