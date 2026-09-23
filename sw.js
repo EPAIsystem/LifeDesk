@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v71 — expanded the image safety filter to properly cover drug/substance-related terms (cocaine, heroin, marijuana, syringes, etc.) — previously only had "drug use" and "overdose", missing the broader category this needed to genuinely cover
-const CACHE = 'lifedesk-v71';
+// LifeDesk Service Worker v72 — hid all 4 Kids Desk entry points (mode tab, Home quick action, Home banner, vertical picker tile) and softened Youth Zone's explicit "Ages 13-25" callout, to match the app's 18+ Play Store declaration for this launch — underlying code left intact, not deleted, for a proper compliant relaunch of Kids Desk as its own future project
+const CACHE = 'lifedesk-v72';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
