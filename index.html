@@ -1388,7 +1388,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
   <div id="devot-card-wrap" style="padding:16px 16px 0;"></div>
 <div class="mode-bar">
   <div class="mbt on" id="mode-main" onclick="setMode('main')">🌍 Main</div>
-  <div class="mbt" id="mode-kids" onclick="setMode('kids')">🧒 Kids</div>
+  <div class="mbt" id="mode-kids" onclick="setMode('kids')" style="display:none;">🧒 Kids</div>
   <div class="mbt" id="mode-youth" onclick="setMode('youth')">🎓 Youth</div>
 </div>
 <div class="srch" onclick="showScreen('s-verticals')">
@@ -1407,7 +1407,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div class="qc" onclick="openVertical('health')"><div class="qiw" style="background:#FFE4E6;">🩺</div><span class="ql">Health</span></div>
     <div class="qc" onclick="openVertical('finance')"><div class="qiw" style="background:#F3E8FF;">💰</div><span class="ql">Finance</span></div>
     <div class="qc" onclick="openVertical('luxury')"><div class="qiw" style="background:#FEF3C0;">💎</div><span class="ql">Luxury</span></div>
-    <div class="qc" onclick="showScreen('s-kids')"><div class="qiw" style="background:#FFEDD5;">🧒</div><span class="ql">Kids</span></div>
+    <div class="qc" onclick="showScreen('s-kids')" style="display:none;"><div class="qiw" style="background:#FFEDD5;">🧒</div><span class="ql">Kids</span></div>
   </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 10px;">
     <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:16px;padding:16px;color:#fff;cursor:pointer;" onclick="showScreen('s-prayer')">
@@ -1438,7 +1438,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div class="ins-txt">"Ask about today's market prices — LifeDesk searches the web in real time."</div>
     <div class="ins-meta">🌾 Farming · Live search enabled · Tap to ask →</div>
   </div>
-  <div class="kids-bn" onclick="showScreen('s-kids')">
+  <div class="kids-bn" onclick="showScreen('s-kids')" style="display:none;">
     <div style="font-size:40px;flex-shrink:0;">🧒</div>
     <div><div style="font-size:16px;font-weight:800;margin-bottom:2px;">Kids Desk is ready!</div><div style="font-size:12px;opacity:.8;">Fun learning for ages 4–12</div></div>
   </div>
@@ -1517,8 +1517,8 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
   </div>
   <div class="vsl">Special Modes</div>
   <div class="vg">
-    <div class="vc kv" onclick="showScreen('s-kids')"><span class="vc-icon">🧒</span><div class="vc-badge vbn">Safe</div><div class="vc-name">Kids Desk</div><div class="vc-desc">Ages 4–12</div></div>
-    <div class="vc yv" onclick="openVertical('youth')"><span class="vc-icon">🎓</span><div class="vc-badge vbn">New</div><div class="vc-name">Youth Zone</div><div class="vc-desc">Ages 13–25</div></div>
+    <div class="vc kv" onclick="showScreen('s-kids')" style="display:none;"><span class="vc-icon">🧒</span><div class="vc-badge vbn">Safe</div><div class="vc-name">Kids Desk</div><div class="vc-desc">Ages 4–12</div></div>
+    <div class="vc yv" onclick="openVertical('youth')"><span class="vc-icon">🎓</span><div class="vc-badge vbn">New</div><div class="vc-name">Youth Zone</div><div class="vc-desc">Career, study, growth</div></div>
     <div class="vc" onclick="openVertical('relationships')"><span class="vc-icon">💍</span><div class="vc-badge vbn">New</div><div class="vc-name">Relationships & Marriage</div><div class="vc-desc">Courtship, marriage</div></div>
   </div>
 </div><div style="height:20px;"></div></div>
@@ -3065,7 +3065,7 @@ var VD={
   food:{name:'Food & Cooking',sub:'Recipes · Nutrition',icon:'🍲',bg:'#FFF3E0',lex:true,rpath:false,ns:false,qs:['Traditional recipes from my region?','How to cook Fufu and light soup?','Healthy food for children?','Where to buy organic ingredients near me?','Popular exotic dishes I can try locally?']},
   auto:{name:'Automotive',sub:'Ghana · Buying · Repairs',icon:'🚗',bg:'#F1F5F9',lex:true,rpath:false,ns:true,qs:['Current fuel prices in Ghana?','How to buy a reliable used car in Ghana?','Car repair shops near me?','How to import a car duty-free?','Common car scams to avoid in Accra?']},
   arts:{name:'Arts & Culture',sub:'Heritage · Creative work',icon:'🎭',bg:'#FCE7F3',lex:false,rpath:false,ns:false,qs:['History of Kente weaving in Ghana?','Upcoming cultural festivals in my region?','How to monetize traditional art online?','How to write and publish a local novel?','Film industry opportunities in Ghana?']},
-  youth:{name:'Youth Zone',sub:'Ages 13-25 · Deep learning',icon:'🎓',bg:'#EDE9FE',lex:false,rpath:false,ns:true,qs:['Best tech career paths for Ghanaian youth?','How to start a business as a student?','University application tips for Ghana?','Latest remote work for youth?','Youth leadership programs in Ghana?']},
+  youth:{name:'Youth Zone',sub:'Career, study & growth',icon:'🎓',bg:'#EDE9FE',lex:false,rpath:false,ns:true,qs:['Best tech career paths for Ghanaian youth?','How to start a business as a student?','University application tips for Ghana?','Latest remote work for youth?','Youth leadership programs in Ghana?']},
   relationships:{name:'Relationships & Marriage',sub:'Courtship · Marriage · Family',icon:'💍',bg:'#FCE7F3',lex:false,rpath:false,ns:false,wholesome:true,qs:['How do I know if someone is right for marriage?','Tips for healthy communication in a relationship','How to prepare for marriage the right way','Red flags to watch for before marriage','Biblical principles for choosing a spouse']},
   'kids-ai':{name:'Kids Desk · AI & Coding',sub:'Safe Mode',icon:'🤖',bg:'#FFEDD5',lex:false,rpath:false,ns:false,qs:['What is a robot?','How does a computer think?','What is AI?','Can I make a game?','What is coding?']},
   'kids-science':{name:'Kids Desk · Science',sub:'Safe Mode',icon:'🔬',bg:'#DBEAFE',lex:false,rpath:false,ns:false,qs:['Why is the sky blue?','How do plants grow?','What is electricity?','Why do we need water?','How do birds fly?']},
