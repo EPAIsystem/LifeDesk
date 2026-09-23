@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v73 — fixed vertical headings being obscured on real device screenshots: a fake decorative phone "notch" (built for the desktop preview mockup) was never hidden on the installed app, unlike the fake status bar fixed earlier — it sat at very high z-index directly over real header content. Also strengthened standalone-mode detection (matchMedia alone can be unreliable in some Android TWA versions) and added safe-area-inset padding as defensive protection against any translucent system status bar.
-const CACHE = 'lifedesk-v73';
+// LifeDesk Service Worker v74 — fixed a real bug: openVertical() never cleared a leftover photo/document attachment, so an old upload from a previous, unrelated conversation could silently attach itself to a brand new text-only question, triggering the wrong code path (likely cause of the "Unexpected non-whitespace character after JSON" error seen on desktop). Also added a defensive safety net so no raw technical error message can ever reach a user's screen again, regardless of the underlying cause.
+const CACHE = 'lifedesk-v74';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────

@@ -3174,6 +3174,10 @@ function setLex(btn){document.querySelectorAll('.lex-btn').forEach(function(b){b
 // OPEN VERTICAL
 function openVertical(v){
   CV=v;CH=[];
+  // A photo or file attached in a previous, unrelated conversation should
+  // never silently carry over into a fresh one in a different vertical.
+  if(typeof clearImage === 'function') clearImage();
+  if(typeof clearDoc === 'function') clearDoc();
   // Clear answer body when switching verticals
   var ab=g('ans-body');
   if(ab)ab.innerHTML='<div class="qbub" id="ans-question">Question</div>'+
@@ -3740,9 +3744,20 @@ function askFromHub(question, vertical) {
   }
 }
 
+// Some errors that reach here are raw technical messages (a JSON parse
+// error, a native browser exception) rather than something meant for a
+// user to read. This catches that whole class of problem defensively —
+// whatever the underlying cause, a user should never see "Unexpected
+// non-whitespace character after JSON at position 14."
+function friendlyErrorMessage(msg){
+  if(!msg) return 'Check your connection and try again.';
+  var looksTechnical = /unexpected token|json|syntaxerror|typeerror|referenceerror|at position \d|stack trace/i.test(msg);
+  if(looksTechnical) return 'Something went wrong generating that answer. Please try again.';
+  return msg;
+}
 function renderError(msg){
   g('live-dot').style.animationPlayState='paused';g('live-txt').textContent='⚠ Error';
-  g('ans-bubble').innerHTML='<div class="err-card"><div class="err-title">⚠ Could not get answer</div><div class="err-msg">'+(msg||'Check your connection and try again.')+'</div></div>';
+  g('ans-bubble').innerHTML='<div class="err-card"><div class="err-title">⚠ Could not get answer</div><div class="err-msg">'+friendlyErrorMessage(msg)+'</div></div>';
 }
 // ── TOPIC MAPS per vertical ──
 var TOPIC_MAPS = {
