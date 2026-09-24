@@ -1775,6 +1775,7 @@ body{background:#1C1410;font-family:"Nunito",sans-serif;display:flex;justify-con
     <div class="set-item" onclick="openVoiceModal()" style="cursor:pointer;"><div class="set-ico" style="background:#EDE9FE;">&#128266;</div><span class="set-lbl">Voice Profile</span><span class="set-val" id="set-voice-val">Default</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
     <div class="set-item" onclick="openColorModal()" style="cursor:pointer;"><div class="set-ico" style="background:#D4EDDA;">&#127912;</div><span class="set-lbl">App Colour</span><span class="set-val" id="set-color-val">Forest Green</span><span style="color:#A8A29E;font-size:13px;">&rsaquo;</span></div>
     <div class="set-item" onclick="openNotificationsModal()" style="cursor:pointer;"><div class="set-ico" style="background:#FEF3C0;">🔔</div><span class="set-lbl">Notifications</span><span class="set-val" id="set-notif-val">Off</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
+    <div class="set-item" onclick="LDLibrary.open()" style="cursor:pointer;"><div class="set-ico" style="background:#FEF3C0;">📚</div><span class="set-lbl">Library</span><span class="set-val">Your saved work</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
     <div class="set-item" onclick="shareApp()" style="cursor:pointer;"><div class="set-ico" style="background:#DBEAFE;">🔗</div><span class="set-lbl">Share LifeDesk</span><span class="set-val">Send to a friend</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
     <div class="set-item" onclick="openReferral()" style="cursor:pointer;"><div class="set-ico" style="background:#FCE7F3;">👥</div><span class="set-lbl">Refer a Friend</span><span class="set-val">Get 2 wks free</span><span style="color:#A8A29E;font-size:13px;">›</span></div>
   </div>
@@ -3561,6 +3562,7 @@ function sendFollowUp(){
       fuBub.innerHTML=fmtAns(t2,CV)+'<div class="tags"><span class="tag tag-g">📍 Follow-up</span></div>'+
         '<div class="act-row">'+
           '<div class="act-pill" onclick="copyAnswerToClipboard(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📋 Copy</div>'+
+          '<div class="act-pill" onclick="saveFollowUpToLibrary(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📚 Save</div>'+
         '<div class="act-pill" onclick="shareFollowUpAnswer(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">🔗 Share</div>'+
           '<div class="act-pill" onclick="exportFollowUpAsWord(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📄 Word</div>'+
           '<div class="act-pill" onclick="exportFollowUpAsExcel(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📊 Excel</div>'+
@@ -3608,6 +3610,7 @@ function renderAnswer(txt,d,used){
     '<div class="act-row">'+
       '<button class="fav-btn" id="fav-btn-main" onclick="toggleFavourite()" title="Save to Favourites">⭐</button>'+
       '<div class="act-pill" onclick="copyAnswerToClipboard(this)" style="cursor:pointer;">📋 Copy</div>'+
+      '<div class="act-pill" onclick="LDLibrary.saveText({title:LAST_ANS.q,text:LAST_ANS.a,subject:\''+d.name+'\'})" style="cursor:pointer;">📚 Save</div>'+
       '<div class="act-pill" id="act-share-btn" onclick="shareAnswer()" style="cursor:pointer;">🔗 Share</div>'+
       '<div class="act-pill" onclick="exportAnswerAsWord(LAST_ANS.q, LAST_ANS.a)" style="cursor:pointer;">📄 Word</div>'+
       '<div class="act-pill" onclick="exportAnswerAsExcel(LAST_ANS.q, LAST_ANS.a)" style="cursor:pointer;">📊 Excel</div>'+
@@ -4758,6 +4761,14 @@ function exportAnswerAsWord(q, a) {
   document.body.removeChild(a_tag);
   setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
   showToast('📄 Saved as Word document');
+}
+
+function saveFollowUpToLibrary(el) {
+  var q = decodeURIComponent(el.getAttribute('data-q') || '');
+  var a = decodeURIComponent(el.getAttribute('data-a') || '');
+  if(!a) { showToast('Nothing to save yet'); return; }
+  var d = VD[CV] || VD.farming;
+  LDLibrary.saveText({ title: q, text: a, subject: d.name });
 }
 
 function copyAnswerToClipboard(el) {
@@ -7692,6 +7703,7 @@ sendFollowUp = function() {
       fuBub.innerHTML=fmtAns(t2,CV)+'<div class="tags"><span class="tag tag-g">📍 Follow-up</span></div>'+
         '<div class="act-row">'+
           '<div class="act-pill" onclick="copyAnswerToClipboard(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📋 Copy</div>'+
+          '<div class="act-pill" onclick="saveFollowUpToLibrary(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📚 Save</div>'+
         '<div class="act-pill" onclick="shareFollowUpAnswer(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">🔗 Share</div>'+
           '<div class="act-pill" onclick="exportFollowUpAsWord(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📄 Word</div>'+
           '<div class="act-pill" onclick="exportFollowUpAsExcel(this)" data-q="'+encodeURIComponent(txt)+'" data-a="'+encodeURIComponent(t2)+'" style="cursor:pointer;">📊 Excel</div>'+
@@ -8972,3 +8984,4 @@ renderAnswer = function(text, d, isFollowup) {
 };
 
 </script>
+<script src="ld-library.js"></script>

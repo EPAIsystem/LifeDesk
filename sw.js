@@ -1,6 +1,6 @@
-// LifeDesk Service Worker v77 — changed the system chrome color (status bar / Custom Tabs toolbar) from saturated green to neutral cream, matching the app's actual background. This can't dynamically sync to the user's in-app theme choice — it's baked into the native package, not reactive to page JS — so a neutral shade that doesn't clash with any theme is the right practical fix rather than a fixed green fighting with red/blue/purple content.
-const CACHE = 'lifedesk-v77';
-const ASSETS = ['/', '/index.html'];
+// LifeDesk Service Worker v78 — added LifeDesk Library: save any answer or follow-up into a subject folder (e.g. "Instagram Business Stack"), with multiple saves to the same subject merging into one master Word document instead of piling up as separate files. Added a 📚 Save button to answer/follow-up action rows and a Library entry point in Profile.
+const CACHE = 'lifedesk-v78';
+const ASSETS = ['/', '/index.html', '/ld-library.js'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
 // Handles a push notification arriving while the app is closed or in the
