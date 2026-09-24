@@ -1,5 +1,5 @@
-// LifeDesk Service Worker v76 — fixed the black bar still showing at top AND bottom after v75: switched from unreliable JS standalone-detection to a guaranteed CSS media query to hide the fake notch/status bar on any mobile-width screen, and added a JS-measured real window height as a fallback since some Android WebView versions don't reliably calculate 100vh/100dvh
-const CACHE = 'lifedesk-v76';
+// LifeDesk Service Worker v77 — changed the system chrome color (status bar / Custom Tabs toolbar) from saturated green to neutral cream, matching the app's actual background. This can't dynamically sync to the user's in-app theme choice — it's baked into the native package, not reactive to page JS — so a neutral shade that doesn't clash with any theme is the right practical fix rather than a fixed green fighting with red/blue/purple content.
+const CACHE = 'lifedesk-v77';
 const ASSETS = ['/', '/index.html'];
 
 // ── PUSH NOTIFICATIONS (background) ──────────────────────
